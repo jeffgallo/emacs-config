@@ -1,0 +1,1 @@
+("~/.emacs.d/" "~/Repos/shadow-cljs-explore/" "~/Repos/myBlog/" "~/Repos/lambdaAuthorizerNodeJs/" "~/Repos/dynamic-programming-exercise/" "~/Repos/clojure-aws-lambda/" "~/Repos/angular-sample/" "~/Repos/LearnClojureScriptContactsBook/" "~/Repos/Higher Ed Trails/")

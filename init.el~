@@ -1,0 +1,189 @@
+;; Startup
+(setq inhibit-startup-message t
+      cursor-type 'bar)
+;; Basic UI changes:
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-fringe-mode 5)
+(when window-system (set-frame-size (selected-frame) 120 80))
+(global-display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
+
+;; Set up the visible bell
+(setq visible-bell t)
+
+;; Define the init file
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; Define and initialise package repositories (package.el is turned off in early-init.el)
+
+;; Install straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Install Use-Package and configure to use Straight
+(straight-use-package 'use-package)
+(use-package straight
+	     :custom (straight-use-package-by-default t))
+
+;; UI stuff:
+;; Add a theme for eye-ease
+(use-package nord-theme
+  :ensure t
+  :config (load-theme 'nord t))
+
+;; Note: the first time you load this config you'll need to run the following interactively:
+;; M-x all-the-icons-install-fonts
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+;; Evil mode
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration nil)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  :config
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+
+  (evil-mode 1)
+  )
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config (evil-collection-init))
+
+
+
+;; Ivy completion/Ivy adjacent items
+(use-package counsel
+  :ensure t
+  :bind (("M-x" . counsel-M-x)
+  ("C-x b" . counsel-ibuffer)
+  ("C-x C-f" . counsel-find-file)
+  :map minibuffer-local-map
+  ("C-r" . 'counsel-minibuffer-history)))
+
+(use-package ivy
+  :demand
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)	
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t
+	iv-count-format "%d/%d "))
+
+(use-package general
+  :config
+  (general-create-definer jeff/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+  (jeff/leader-keys
+   "v" '(:ignore v :which-key "visuals")
+   "vt" '(counsel-load-theme :which-key "choose theme")
+   "b" '(:ignore t :which-key "buffers")
+   "bk" '(kill-buffer :which-key "Kill Current Buffer")))
+
+(use-package hydra)
+(defhydra hydra-text-scale (:timeout 5)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+(jeff/leader-keys
+  "vs" '(hydra-text-scale/body :which-key "scale text"))
+
+(general-define-key
+ "C-M-j" 'counsel-swich-buffer)
+ 
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+;; 'helpful' for describing functions:
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-funcion] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+(global-set-key (kbd "C-h C") #'helpful-command)
+
+;; Magit and projectile
+
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package evil-magit
+  :after magit)
+
+;; add some globale leader-key bindings for magit
+(jeff/leader-keys
+  "g" '(:ignore t :which-key "git")
+  "gs" 'magit-status
+  "gd" 'magit-diff-unstaged
+  "gc" 'magit-branch-or-checkout
+  "gl" '(:ignore t :which-key "log")
+  "glc" 'magit-log-current
+  "glf" 'magit-log-buffer-file
+  "gb" 'magit-branch
+  "gP" 'magit-push-current
+  "gp" 'magit-pull-branch
+  "gf" 'magit-fetch
+  "gF" 'magit-fetch-all
+  "gr" 'magit-rebase)
+
