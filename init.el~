@@ -129,7 +129,8 @@
    "v" '(:ignore v :which-key "visuals")
    "vt" '(counsel-load-theme :which-key "choose theme")
    "b" '(:ignore t :which-key "buffers")
-   "bk" '(kill-buffer :which-key "Kill Current Buffer")))
+   "bs" '(counsel-switch-buffer :which-key "switch buffer")
+   "bk" '(kill-buffer :which-key "kill buffer")))
 
 (use-package hydra)
 (defhydra hydra-text-scale (:timeout 5)
@@ -139,9 +140,6 @@
   ("f" nil "finished" :exit t))
 (jeff/leader-keys
   "vs" '(hydra-text-scale/body :which-key "scale text"))
-
-(general-define-key
- "C-M-j" 'counsel-swich-buffer)
  
 
 (use-package ivy-rich
@@ -161,8 +159,7 @@
   ([remap describe-key] . helpful-key))
 (global-set-key (kbd "C-h C") #'helpful-command)
 
-;; Magit and projectile
-
+;; Magit 
 (use-package magit
   :commands (magit-status magit-get-current-branch)
   :custom
@@ -171,7 +168,7 @@
 (use-package evil-magit
   :after magit)
 
-;; add some globale leader-key bindings for magit
+;; add some global leader-key bindings for magit
 (jeff/leader-keys
   "g" '(:ignore t :which-key "git")
   "gs" 'magit-status
@@ -185,5 +182,27 @@
   "gp" 'magit-pull-branch
   "gf" 'magit-fetch
   "gF" 'magit-fetch-all
-  "gr" 'magit-rebase)
+  "gr" 'magit-rebase
+  "gi" 'magit-init
+  "gh" 'magit-info)
+
+;; Projectile
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Repos")
+    (setq projectile-project-search-path '("~/Repos")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(jeff/leader-keys
+  "p" 'projectile-command-map)
+
+;; Org-mode
 

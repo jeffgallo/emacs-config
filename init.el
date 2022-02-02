@@ -1,18 +1,3 @@
-;; Startup
-(setq inhibit-startup-message t
-      cursor-type 'bar)
-;; Basic UI changes:
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(set-fringe-mode 5)
-(when window-system (set-frame-size (selected-frame) 120 80))
-(global-display-line-numbers-mode)
-(setq display-line-numbers-type 'relative)
-
-;; Set up the visible bell
-(setq visible-bell t)
-
 ;; Define the init file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
@@ -40,10 +25,42 @@
 	     :custom (straight-use-package-by-default t))
 
 ;; UI stuff:
+;; Startup
+(setq inhibit-startup-message t
+      cursor-type 'bar)
+;; Basic UI changes:
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-fringe-mode 5)
+(when window-system (set-frame-size (selected-frame) 120 80))
+
+(defun display-line-numbers-hook ()
+  (display-line-numbers-mode t)
+  )
+
+(add-hook 'prog-mode-hook 'display-line-numbers-hook)
+(setq display-line-numbers-type 'relative)
+
+;; Set up the visible bell
+(setq visible-bell t)
+
+;; Faces
+(defvar jeff/default-font-size 120)
+
+(set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 140)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 180 :weight 'regular)
 ;; Add a theme for eye-ease
-(use-package nord-theme
-  :ensure t
-  :config (load-theme 'nord t))
+;; (use-package nord-theme
+;;   :ensure t
+;;   :config (load-theme 'nord t))
+(use-package doom-themes
+  :init (load-theme 'doom-nord t))
 
 ;; Note: the first time you load this config you'll need to run the following interactively:
 ;; M-x all-the-icons-install-fonts
@@ -88,7 +105,27 @@
   :ensure t
   :config (evil-collection-init))
 
+(use-package general
+  :config
+  (general-create-definer jeff/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+  (jeff/leader-keys
+   "v" '(:ignore v :which-key "visuals")
+   "vt" '(counsel-load-theme :which-key "choose theme")
+   "b" '(:ignore t :which-key "buffers")
+   "bs" '(counsel-switch-buffer :which-key "switch buffer")
+   "bk" '(kill-buffer :which-key "kill buffer")))
 
+(use-package hydra)
+(defhydra hydra-text-scale (:timeout 5)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+(jeff/leader-keys
+  "vs" '(hydra-text-scale/body :which-key "scale text"))
 
 ;; Ivy completion/Ivy adjacent items
 (use-package counsel
@@ -119,28 +156,6 @@
   (setq ivy-use-virtual-buffers t
 	iv-count-format "%d/%d "))
 
-(use-package general
-  :config
-  (general-create-definer jeff/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-  (jeff/leader-keys
-   "v" '(:ignore v :which-key "visuals")
-   "vt" '(counsel-load-theme :which-key "choose theme")
-   "b" '(:ignore t :which-key "buffers")
-   "bs" '(counsel-switch-buffer :which-key "switch buffer")
-   "bk" '(kill-buffer :which-key "kill buffer")))
-
-(use-package hydra)
-(defhydra hydra-text-scale (:timeout 5)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-(jeff/leader-keys
-  "vs" '(hydra-text-scale/body :which-key "scale text"))
- 
 
 (use-package ivy-rich
   :init
@@ -153,7 +168,7 @@
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
   :bind
-  ([remap describe-funcion] . counsel-describe-function)
+  ([remap describe-function] . counsel-describe-function)
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
@@ -161,12 +176,10 @@
 
 ;; Magit 
 (use-package magit
-  :commands (magit-status magit-get-current-branch)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  :ensure t) 
 
-(use-package evil-magit
-  :after magit)
+;; (use-package evil-magit
+;;   :after magit)
 
 ;; add some global leader-key bindings for magit
 (jeff/leader-keys
@@ -198,11 +211,82 @@
     (setq projectile-project-search-path '("~/Repos")))
   (setq projectile-switch-project-action #'projectile-dired))
 
+(use-package rg
+  :ensure t)
+
 (use-package counsel-projectile
+  :ensure t 
   :config (counsel-projectile-mode))
 
 (jeff/leader-keys
   "p" 'projectile-command-map)
 
 ;; Org-mode
+
+(defun jeff/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
+(defun jeff/org-mode-font-setup ()
+  ;; Replace list hyphen with dot
+  ;; (font-lock-add-keywords 'org-mode
+  ;;                         '(("^ *\\([-]\\) "
+  ;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+;; Set faces for heading levels
+(dolist (face '((org-level-1 . 1.2)
+                (org-level-2 . 1.1)
+                (org-level-3 . 1.05)
+                (org-level-4 . 1.0)
+                (org-level-5 . 1.1)
+                (org-level-6 . 1.1)
+                (org-level-7 . 1.1)
+                (org-level-8 . 1.1)))
+(set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+
+;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+  )
+
+
+(use-package org
+  :hook (org-mode . jeff/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾"
+	org-hide-emphasis-markers t)
+  (jeff/org-mode-font-setup))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (clojure . t)))
+(setq org-confirm-babel-evaluate nil)
+
+(require 'org-tempo)
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("cl" . "src clojure"))
+
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+
 
