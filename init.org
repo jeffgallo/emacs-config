@@ -83,57 +83,64 @@
 #+end_src
 * EVIL and General leader keys
 #+begin_src emacs-lisp
-;; Evil mode
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration nil)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    ;; Evil mode
+    (use-package evil
+      :ensure t
+      :init
+      (setq evil-want-integration nil)
+      (setq evil-want-C-i-jump nil)
+      (setq evil-want-keybinding nil)
+      (setq evil-want-C-u-scroll t)
+      :config
+      (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+      (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+      (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
+      (evil-set-initial-state 'messages-buffer-mode 'normal)
+      (evil-set-initial-state 'dashboard-mode 'normal)
+      (evil-set-initial-state 'elfeed-mode 'emacs)
+  (evil-set-initial-state 'pocket-reader-mode 'emacs)
+  
+      (evil-mode 1)
+      )
 
-  (evil-mode 1)
-  )
+    (use-package evil-collection
+      :after evil
+      :ensure t
+      :config (evil-collection-init))
 
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config (evil-collection-init))
+    (use-package general
+      :config
+      (general-create-definer jeff/leader-keys
+        :keymaps '(normal insert visual emacs)
+        :prefix "SPC"
+        :global-prefix "C-SPC")
+      (jeff/leader-keys
+       "v" '(:ignore t :which-key "visuals")
+       "vt" '(counsel-load-theme :which-key "choose theme")
+       "b" '(:ignore t :which-key "buffers")
+       "bs" '(counsel-switch-buffer :which-key "switch buffer")
+       "bk" '(kill-current-buffer :which-key "kill current buffer")
+       "bK" '(kill-buffer :which-key "kill buffer from list")
+       "r" '(:ignore t :which-key "read")
+       "re" '(elfeed :which-key "elfeed")
+       "rp" '(pocket-reader :which-key "pocket")))
 
-(use-package general
-  :config
-  (general-create-definer jeff/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-  (jeff/leader-keys
-   "v" '(:ignore v :which-key "visuals")
-   "vt" '(counsel-load-theme :which-key "choose theme")
-   "b" '(:ignore t :which-key "buffers")
-   "bs" '(counsel-switch-buffer :which-key "switch buffer")
-   "bk" '(kill-buffer :which-key "kill buffer")))
+    (use-package hydra)
+    (defhydra hydra-text-scale (:timeout 5)
+      "scale text"
+      ("j" text-scale-increase "in")
+      ("k" text-scale-decrease "out")
+      ("f" nil "finished" :exit t))
+    (jeff/leader-keys
+      "vs" '(hydra-text-scale/body :which-key "scale text"))
 
-(use-package hydra)
-(defhydra hydra-text-scale (:timeout 5)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-(jeff/leader-keys
-  "vs" '(hydra-text-scale/body :which-key "scale text"))
- 
 
 #+end_src
 *  Ivy and Counsel
 #+begin_src emacs-lisp
+  (use-package smex)
   ;; Ivy completion/Ivy adjacent items
   (use-package counsel
     :ensure t
@@ -358,6 +365,27 @@ Tool for viewing function and key descriptions etc.
                    (setq org-default-notes-file "~/Nextcloud/org/REFILE.org")
   
 #+end_src
+* Org-Roam
+#+begin_src emacs-lisp
+  (use-package org-roam
+      :ensure t
+      :custom
+      (org-roam-directory (file-truename "~/Nextcloud/org/roam/"))
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+
+#+end_src
 * Elfeed
 #+begin_src emacs-lisp
 (use-package elfeed
@@ -472,7 +500,7 @@ Try these commands with M-x:
 This package is built on the treemacs package which might be of some interest to you if you like to have a file browser at the left side of your screen in your editor.
 #+begin_src emacs-lisp
   (use-package lsp-treemacs
-  :after lsp)
+   :after lsp)
 #+end_src
 
 *lsp-Ivy*
@@ -494,19 +522,21 @@ Try these with M-x:
 ** Company Mode
 In-buffer completion interface using TAB key for completion:
 #+begin_src emacs-lisp
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (use-package company
+    :after lsp-mode
+    :hook (lsp-mode . company-mode)
+    :bind (:map company-active-map
+           ("<tab>" . company-complete-selection))
+          (:map lsp-mode-map
+           ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0)
+    (company-show-numbers t))
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
+  (global-company-mode)
 #+end_src
 ** Languages
 *** Clojure 
@@ -519,12 +549,15 @@ In-buffer completion interface using TAB key for completion:
   #+end_src
 *** Javascript/Typescript
 #+begin_src emacs-lisp
-    (use-package json-mode)
-  (use-package typescript-mode
-    :mode "\\.ts\\'"
-    :hook (typescript-mode . lsp-deferred)
-    :config
-    (setq typescript-indent-level 2))
+      (use-package json-mode)
+      (use-package js2-mode
+        :mode "\\.js\\'"
+        :hook (js2-mode . lsp-deferred))
+      (use-package typescript-mode
+        :mode "\\.ts\\'"
+        :hook (typescript-mode . lsp-deferred)
+        :config
+        (setq typescript-indent-level 2))
 #+end_src
 *** PlantUML
 #+begin_src emacs-lisp
@@ -574,29 +607,36 @@ Manage your project files!
 (jeff/leader-keys
   "p" 'projectile-command-map)
 #+end_src
-** Tabnine?
+** Tabnine
+#+begin_src emacs-lisp
+    (use-package company-tabnine
+      :ensure t)
+
+  (add-to-list 'company-backends #'company-tabnine)
+  
+#+end_src
 * Emacs Application Framework:
 #+begin_src emacs-lisp
-  (use-package eaf
-    :load-path "~/newemacs.d/site-lisp/emacs-application-framework"
-    :custom
-    ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-    (eaf-browser-continue-where-left-off t)
-    (eaf-browser-enable-adblocker t)
-    (browse-url-browser-function 'eaf-open-browser)
-    :config
-    (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
-  (require 'eaf-music-player)
-  (require 'eaf-pdf-viewer)
-  (require 'eaf-image-viewer)
-  (require 'eaf-video-player)
+  ;; (use-package eaf
+  ;;   :load-path "~/newemacs.d/site-lisp/emacs-application-framework"
+  ;;   :custom
+  ;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+  ;;   (eaf-browser-continue-where-left-off t)
+  ;;   (eaf-browser-enable-adblocker t)
+  ;;   (browse-url-browser-function 'eaf-open-browser)
+  ;;   :config
+  ;;   (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
+  ;; (require 'eaf-music-player)
+  ;; (require 'eaf-pdf-viewer)
+  ;; (require 'eaf-image-viewer)
+  ;; (require 'eaf-video-player)
 #+end_src
-* Web browser
+** Web browser 
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "~/newemacs.d/site-lisp/emacs-application-framework/")
-  (require 'eaf)
-  (require 'eaf-browser)
-  (eaf-bind-key nil "M-q" eaf-browser-keybinding)
+  ;; (add-to-list 'load-path "~/newemacs.d/site-lisp/emacs-application-framework/")
+  ;; (require 'eaf)
+  ;; (require 'eaf-browser)
+  ;; (eaf-bind-key nil "M-q" eaf-browser-keybinding)
 #+end_src
 * Transparency
 #+begin_src emacs-lisp
@@ -617,4 +657,19 @@ Manage your project files!
                100)
           '(92 . 60) '(100 . 100)))))
  (global-set-key (kbd "C-c t") 'toggle-transparency)
+#+end_src
+* Web Browsing
+** EWW
+#+begin_src emacs-lisp
+(setq
+ browse-url-browser-function 'eww-browse-url ; Use eww as the default browser
+ shr-use-fonts  nil                          ; No special fonts
+ shr-use-colors nil                          ; No colours
+ shr-indentation 2                           ; Left-side margin
+ shr-width 110                                ; Fold text to 110 columns
+ eww-search-prefix "https://duckduckgo.com/?q=")    ; Use another engine for searching
+#+end_src
+** Pocket-reader
+#+begin_src emacs-lisp
+(use-package pocket-reader)
 #+end_src

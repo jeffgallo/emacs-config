@@ -75,52 +75,59 @@
   (setq which-key-idle-delay 1))
 
 ;; Evil mode
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration nil)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-integration nil)
+    (setq evil-want-C-i-jump nil)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    :config
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal)
+    (evil-set-initial-state 'elfeed-mode 'emacs)
+(evil-set-initial-state 'pocket-reader-mode 'emacs)
 
-  (evil-mode 1)
-  )
+    (evil-mode 1)
+    )
 
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config (evil-collection-init))
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config (evil-collection-init))
 
-(use-package general
-  :config
-  (general-create-definer jeff/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
+  (use-package general
+    :config
+    (general-create-definer jeff/leader-keys
+      :keymaps '(normal insert visual emacs)
+      :prefix "SPC"
+      :global-prefix "C-SPC")
+    (jeff/leader-keys
+     "v" '(:ignore t :which-key "visuals")
+     "vt" '(counsel-load-theme :which-key "choose theme")
+     "b" '(:ignore t :which-key "buffers")
+     "bs" '(counsel-switch-buffer :which-key "switch buffer")
+     "bk" '(kill-current-buffer :which-key "kill current buffer")
+     "bK" '(kill-buffer :which-key "kill buffer from list")
+     "r" '(:ignore t :which-key "read")
+     "re" '(elfeed :which-key "elfeed")
+     "rp" '(pocket-reader :which-key "pocket")))
+
+  (use-package hydra)
+  (defhydra hydra-text-scale (:timeout 5)
+    "scale text"
+    ("j" text-scale-increase "in")
+    ("k" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
   (jeff/leader-keys
-   "v" '(:ignore v :which-key "visuals")
-   "vt" '(counsel-load-theme :which-key "choose theme")
-   "b" '(:ignore t :which-key "buffers")
-   "bs" '(counsel-switch-buffer :which-key "switch buffer")
-   "bk" '(kill-buffer :which-key "kill buffer")))
+    "vs" '(hydra-text-scale/body :which-key "scale text"))
 
-(use-package hydra)
-(defhydra hydra-text-scale (:timeout 5)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-(jeff/leader-keys
-  "vs" '(hydra-text-scale/body :which-key "scale text"))
-
+(use-package smex)
 ;; Ivy completion/Ivy adjacent items
 (use-package counsel
   :ensure t
@@ -337,6 +344,24 @@
            (setq org-directory "~/Nextcloud/org")
            (setq org-default-notes-file "~/Nextcloud/org/REFILE.org")
 
+(use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Nextcloud/org/roam/"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+(setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+(org-roam-db-autosync-mode)
+;; If using org-roam-protocol
+(require 'org-roam-protocol))
+
 (use-package elfeed
   :bind
    (:map elfeed-search-mode-map
@@ -426,7 +451,7 @@
 (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
-:after lsp)
+ :after lsp)
 
 (use-package lsp-ivy)
 
@@ -444,10 +469,12 @@
          ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.0)
+  (company-show-numbers t))
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+(global-company-mode)
 
 (use-package clojure-mode)
 (use-package cider)
@@ -456,6 +483,9 @@
 (add-hook 'clojurec-mode-hook 'lsp)
 
 (use-package json-mode)
+(use-package js2-mode
+  :mode "\\.js\\'"
+  :hook (js2-mode . lsp-deferred))
 (use-package typescript-mode
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
@@ -505,24 +535,29 @@
 (jeff/leader-keys
   "p" 'projectile-command-map)
 
-(use-package eaf
-  :load-path "~/newemacs.d/site-lisp/emacs-application-framework"
-  :custom
-  ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-  (eaf-browser-continue-where-left-off t)
-  (eaf-browser-enable-adblocker t)
-  (browse-url-browser-function 'eaf-open-browser)
-  :config
-  (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
-(require 'eaf-music-player)
-(require 'eaf-pdf-viewer)
-(require 'eaf-image-viewer)
-(require 'eaf-video-player)
+(use-package company-tabnine
+    :ensure t)
 
-(add-to-list 'load-path "~/newemacs.d/site-lisp/emacs-application-framework/")
-(require 'eaf)
-(require 'eaf-browser)
-(eaf-bind-key nil "M-q" eaf-browser-keybinding)
+(add-to-list 'company-backends #'company-tabnine)
+
+;; (use-package eaf
+;;   :load-path "~/newemacs.d/site-lisp/emacs-application-framework"
+;;   :custom
+;;   ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+;;   (eaf-browser-continue-where-left-off t)
+;;   (eaf-browser-enable-adblocker t)
+;;   (browse-url-browser-function 'eaf-open-browser)
+;;   :config
+;;   (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
+;; (require 'eaf-music-player)
+;; (require 'eaf-pdf-viewer)
+;; (require 'eaf-image-viewer)
+;; (require 'eaf-video-player)
+
+;; (add-to-list 'load-path "~/newemacs.d/site-lisp/emacs-application-framework/")
+;; (require 'eaf)
+;; (require 'eaf-browser)
+;; (eaf-bind-key nil "M-q" eaf-browser-keybinding)
 
 ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
   ;;(set-frame-parameter (selected-frame) 'alpha <both>)
@@ -541,3 +576,13 @@
               100)
          '(92 . 60) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
+
+(setq
+ browse-url-browser-function 'eww-browse-url ; Use eww as the default browser
+ shr-use-fonts  nil                          ; No special fonts
+ shr-use-colors nil                          ; No colours
+ shr-indentation 2                           ; Left-side margin
+ shr-width 110                                ; Fold text to 110 columns
+ eww-search-prefix "https://duckduckgo.com/?q=")    ; Use another engine for searching
+
+(use-package pocket-reader)
