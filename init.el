@@ -30,53 +30,59 @@
       user-mail-address "jeffreyfgallo@gmail.com")
 
 ;; Startup
-  (setq inhibit-startup-message t
-        cursor-type 'bar)
-  ;; Confirm on quit
-  (setq confirm-kill-processes nil)
+(setq inhibit-startup-message t
+          cursor-type 'bar)
+    ;; Confirm on quit
+    (setq confirm-kill-processes nil)
 
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (set-fringe-mode 5)
-  (when window-system (set-frame-size (selected-frame) 120 80))
-  (defun display-line-numbers-hook ()
-    (display-line-numbers-mode t)
-    )
-  (add-hook 'prog-mode-hook 'display-line-numbers-hook)
-  (setq display-line-numbers-type 'relative)
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (set-fringe-mode 5)
+    (when window-system (set-frame-size (selected-frame) 120 80))
+    (defun display-line-numbers-hook ()
+      (display-line-numbers-mode t)
+      )
+    (add-hook 'prog-mode-hook 'display-line-numbers-hook)
+    (setq display-line-numbers-type 'relative)
 
-  ;; Set up the visible bell
-  (setq visible-bell t)
-  ;; Faces
-  (defvar jeff/default-font-size 110)
-  (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
-  ;; Set the fixed pitch face
-  (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
-  ;; Set the variable pitch face
-  (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
-  ;; Add a theme for eye-ease
-  ;; (use-package nord-theme
-  ;;   :ensure t
-  ;;   :config (load-theme 'nord t))
-  (use-package doom-themes
-    :init (load-theme 'doom-nord t))
-  ;; Note: the first time you load this config you'll need to run the following interactively:
-  ;; M-x all-the-icons-install-fonts
-  (use-package all-the-icons)
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
-  (use-package rainbow-delimiters
-    :hook (prog-mode . rainbow-delimiters-mode))
+    ;; Set up the visible bell
+    (setq visible-bell t)
+    ;; Faces
+    (defvar jeff/default-font-size 110)
+    (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
+    ;; Set the fixed pitch face
+    (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
+    ;; Set the variable pitch face
+    (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
+    ;; Add a theme for eye-ease
+    ;; (use-package nord-theme
+    ;;   :ensure t
+    ;;   :config (load-theme 'nord t))
+    (use-package doom-themes
+      :init (load-theme 'doom-nord t))
+    ;; Note: the first time you load this config you'll need to run the following interactively:
+    ;; M-x all-the-icons-install-fonts
+(use-package all-the-icons)
+(use-package doom-modeline
+      :ensure t
+      :init (doom-modeline-mode 1))
+(use-package rainbow-delimiters
+      :hook (prog-mode . rainbow-delimiters-mode))
+(use-package paren
+  :straight (:type built-in)
+  :ensure nil
+  :config
+  (show-paren-mode +1))
+
   (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 1))
+      :init (which-key-mode)
+      :diminish which-key-mode
+      :config
+      (setq which-key-idle-delay 1))
 
-  ;; browse-kill-ring
-(use-package browse-kill-ring)
+    ;; browse-kill-ring
+  (use-package browse-kill-ring)
 
 ;; Evil mode
   (use-package evil
@@ -109,6 +115,7 @@
     :config
     (general-create-definer jeff/leader-keys
       :keymaps '(normal insert visual emacs)
+      :states 'normal
       :prefix "SPC"
       :global-prefix "C-SPC")
     (jeff/leader-keys
@@ -116,6 +123,7 @@
      "vt" '(counsel-load-theme :which-key "choose theme")
      "b" '(:ignore t :which-key "buffers")
      "bs" '(counsel-switch-buffer :which-key "switch buffer")
+     "bi" '(ibuffer :which-key "buffers")
      "bk" '(kill-current-buffer :which-key "kill current buffer")
      "bK" '(kill-buffer :which-key "kill buffer from list")
      "r" '(:ignore t :which-key "read")
@@ -123,7 +131,8 @@
      "rp" '(pocket-reader :which-key "pocket")
      "o" '(:ignore t :which-key "org")
      "oa" '(org-agenda :which-key "org-agenda")
-     "oc" '(org-capture :which-key "org-capture")))
+     "oc" '(org-capture :which-key "org-capture")
+     "d" '(dired :which-key "dired")))
 
   (use-package hydra)
   (defhydra hydra-text-scale (:timeout 5)
@@ -171,6 +180,36 @@
     :init
     (ivy-rich-mode 1))
 
+(use-package dired
+     :straight (:type built-in)
+     :ensure nil
+     :commands (dired dired-jump)
+     :bind (("C-x C-j" . dired-jump))
+     ;;:custom ((dired-listing-switches "-agho --group-directoryies-first"))
+     :config
+   (evil-collection-define-key 'normal 'dired-mode-map
+     "h" 'dired-single-up-directory
+     "l" 'dired-single-buffer))
+
+ (use-package dired-single)
+
+ (use-package all-the-icons-dired
+   :hook (dired-mode . all-the-icons-dired-mode)
+   :init (setq all-the-icons-dired-monochrome nil))
+
+ (use-package dired-open
+   :config
+   ;; Doesn't work as expected!
+   ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+   (setq dired-open-extensions '(("mkv" . "mpv"))))
+
+ (use-package dired-hide-dotfiles
+   :hook (dired-mode . dired-hide-dotfiles-mode)
+   :config
+   (evil-collection-define-key 'normal 'dired-mode-map
+     "H" 'dired-hide-dotfiles-mode)
+)
+
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -183,70 +222,70 @@
 (global-set-key (kbd "C-h C") #'helpful-command)
 
 (defun jeff/org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
-(defun jeff/org-mode-font-setup ()
-  ;; Replace list hyphen with dot
-  ;; (font-lock-add-keywords 'org-mode
-  ;;                         '(("^ *\\([-]\\) "
-  ;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+  (defun jeff/org-mode-font-setup ()
+    ;; Replace list hyphen with dot
+    ;; (font-lock-add-keywords 'org-mode
+    ;;                         '(("^ *\\([-]\\) "
+    ;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-;; Set faces for heading levels
-(dolist (face '((org-level-1 . 1.2)
-                (org-level-2 . 1.1)
-                (org-level-3 . 1.05)
-                (org-level-4 . 1.0)
-                (org-level-5 . 1.1)
-                (org-level-6 . 1.1)
-                (org-level-7 . 1.1)
-                (org-level-8 . 1.1)))
-(set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+  (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-  )
-
-
-(use-package org
-  :hook (org-mode . jeff/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾"
-        org-hide-emphasis-markers t)
-  (jeff/org-mode-font-setup))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (clojure . t)))
-(setq org-confirm-babel-evaluate nil)
-
-(require 'org-tempo)
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("cl" . "src clojure"))
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+;;    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+    )
 
 
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
+  (use-package org
+    :hook (org-mode . jeff/org-mode-setup)
+    :config
+    (setq org-ellipsis " ▾"
+          org-hide-emphasis-markers t)
+    (jeff/org-mode-font-setup))
 
-(use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (clojure . t)))
+  (setq org-confirm-babel-evaluate nil)
+
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("cl" . "src clojure"))
+
+
+  (defun efs/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . efs/org-mode-visual-fill))
 
 (use-package org-super-agenda
   :after org-agenda
@@ -276,6 +315,7 @@
    (list  "~/Nextcloud/org/TessNet.org"
           "~/Nextcloud/org/Review.org"
           "~/Nextcloud/org/TODO.org"
+          "~/Nextcloud/org/Habits.org"
           "~/Nextcloud/org/Journal.org"
           "~/Nextcloud/org/REFILE.org"))
 (setq org-refile-targets '((nil :maxlevel . 2)
@@ -314,29 +354,7 @@
       (quote ((sequence "TODO(t)" "PROJECT(p)" "NEXT(n)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
-
 (setq org-src-tab-acts-natively t)
-
-(add-hook 'dired-mode-hook 'org-download-enable)
-
-     ; Enable habit tracking (and a bunch of other modules)
-     ;; (setq org-modules (quote (org-bbdb
-     ;;                                org-bibtex
-     ;;                                org-crypt
-     ;;                                org-gnus
-     ;;                                org-id
-     ;;                                org-info
-     ;;                                org-jsinfo
-     ;;                                org-habit
-     ;;                                org-inlinetask
-     ;;                                org-irc
-     ;;                                org-mew
-     ;;                                org-mhe
-     ;;                                org-protocol
-     ;;                                org-rmail
-     ;;                                org-vm
-     ;;                                org-wl
-     ;;                                org-w3m)))
 
      ; position the habit graph on the agenda to the right of the default
      (setq org-habit-graph-column 50)

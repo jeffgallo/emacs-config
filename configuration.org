@@ -38,114 +38,123 @@
 #+begin_src emacs-lisp
   ;; Startup
   (setq inhibit-startup-message t
-        cursor-type 'bar)
-  ;; Confirm on quit
-  (setq confirm-kill-processes nil)
+            cursor-type 'bar)
+      ;; Confirm on quit
+      (setq confirm-kill-processes nil)
 
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (set-fringe-mode 5)
-  (when window-system (set-frame-size (selected-frame) 120 80))
-  (defun display-line-numbers-hook ()
-    (display-line-numbers-mode t)
-    )
-  (add-hook 'prog-mode-hook 'display-line-numbers-hook)
-  (setq display-line-numbers-type 'relative)
+      (menu-bar-mode -1)
+      (tool-bar-mode -1)
+      (scroll-bar-mode -1)
+      (set-fringe-mode 5)
+      (when window-system (set-frame-size (selected-frame) 120 80))
+      (defun display-line-numbers-hook ()
+        (display-line-numbers-mode t)
+        )
+      (add-hook 'prog-mode-hook 'display-line-numbers-hook)
+      (setq display-line-numbers-type 'relative)
 
-  ;; Set up the visible bell
-  (setq visible-bell t)
-  ;; Faces
-  (defvar jeff/default-font-size 110)
-  (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
-  ;; Set the fixed pitch face
-  (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
-  ;; Set the variable pitch face
-  (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
-  ;; Add a theme for eye-ease
-  ;; (use-package nord-theme
-  ;;   :ensure t
-  ;;   :config (load-theme 'nord t))
-  (use-package doom-themes
-    :init (load-theme 'doom-nord t))
-  ;; Note: the first time you load this config you'll need to run the following interactively:
-  ;; M-x all-the-icons-install-fonts
+      ;; Set up the visible bell
+      (setq visible-bell t)
+      ;; Faces
+      (defvar jeff/default-font-size 110)
+      (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
+      ;; Set the fixed pitch face
+      (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
+      ;; Set the variable pitch face
+      (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
+      ;; Add a theme for eye-ease
+      ;; (use-package nord-theme
+      ;;   :ensure t
+      ;;   :config (load-theme 'nord t))
+      (use-package doom-themes
+        :init (load-theme 'doom-nord t))
+      ;; Note: the first time you load this config you'll need to run the following interactively:
+      ;; M-x all-the-icons-install-fonts
   (use-package all-the-icons)
   (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
+        :ensure t
+        :init (doom-modeline-mode 1))
   (use-package rainbow-delimiters
-    :hook (prog-mode . rainbow-delimiters-mode))
-  (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
+        :hook (prog-mode . rainbow-delimiters-mode))
+  (use-package paren
+    :straight (:type built-in)
+    :ensure nil
     :config
-    (setq which-key-idle-delay 1))
+    (show-paren-mode +1))
 
-  ;; browse-kill-ring
-(use-package browse-kill-ring)
+    (use-package which-key
+        :init (which-key-mode)
+        :diminish which-key-mode
+        :config
+        (setq which-key-idle-delay 1))
+
+      ;; browse-kill-ring
+    (use-package browse-kill-ring)
 #+end_src
 * EVIL and General leader keys
 #+begin_src emacs-lisp
-              ;; Evil mode
-              (use-package evil
-                :ensure t
-                :init
-                (setq evil-want-integration nil)
-                (setq evil-want-C-i-jump nil)
-                (setq evil-want-keybinding nil)
-                (setq evil-want-C-u-scroll t)
-                :config
-                (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    ;; Evil mode
+    (use-package evil
+      :ensure t
+      :init
+      (setq evil-want-integration nil)
+      (setq evil-want-C-i-jump nil)
+      (setq evil-want-keybinding nil)
+      (setq evil-want-C-u-scroll t)
+      :config
+      (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-                (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-                (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+      (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+      (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-                (evil-set-initial-state 'messages-buffer-mode 'normal)
-                (evil-set-initial-state 'dashboard-mode 'normal)
-                (evil-set-initial-state 'elfeed-mode 'emacs)
-            (evil-set-initial-state 'pocket-reader-mode 'emacs)
+      (evil-set-initial-state 'messages-buffer-mode 'normal)
+      (evil-set-initial-state 'dashboard-mode 'normal)
+      (evil-set-initial-state 'elfeed-mode 'emacs)
+  (evil-set-initial-state 'pocket-reader-mode 'emacs)
 
-                (evil-mode 1)
-                )
+      (evil-mode 1)
+      )
 
-              (use-package evil-collection
-                :after evil
-                :ensure t
-                :config (evil-collection-init))
+    (use-package evil-collection
+      :after evil
+      :ensure t
+      :config (evil-collection-init))
 
-              (use-package general
-                :config
-                (general-create-definer jeff/leader-keys
-                  :keymaps '(normal insert visual emacs)
-                  :prefix "SPC"
-                  :global-prefix "C-SPC")
-                (jeff/leader-keys
-                 "v" '(:ignore t :which-key "visuals")
-                 "vt" '(counsel-load-theme :which-key "choose theme")
-                 "b" '(:ignore t :which-key "buffers")
-                 "bs" '(counsel-switch-buffer :which-key "switch buffer")
-                 "bk" '(kill-current-buffer :which-key "kill current buffer")
-                 "bK" '(kill-buffer :which-key "kill buffer from list")
-                 "r" '(:ignore t :which-key "read")
-                 "re" '(elfeed :which-key "elfeed")
-                 "rp" '(pocket-reader :which-key "pocket")
-                 "o" '(:ignore t :which-key "org")
-                 "oa" '(org-agenda :which-key "org-agenda")
-                 "oc" '(org-capture :which-key "org-capture")))
+    (use-package general
+      :config
+      (general-create-definer jeff/leader-keys
+        :keymaps '(normal insert visual emacs)
+        :states 'normal
+        :prefix "SPC"
+        :global-prefix "C-SPC")
+      (jeff/leader-keys
+       "v" '(:ignore t :which-key "visuals")
+       "vt" '(counsel-load-theme :which-key "choose theme")
+       "b" '(:ignore t :which-key "buffers")
+       "bs" '(counsel-switch-buffer :which-key "switch buffer")
+       "bi" '(ibuffer :which-key "buffers")
+       "bk" '(kill-current-buffer :which-key "kill current buffer")
+       "bK" '(kill-buffer :which-key "kill buffer from list")
+       "r" '(:ignore t :which-key "read")
+       "re" '(elfeed :which-key "elfeed")
+       "rp" '(pocket-reader :which-key "pocket")
+       "o" '(:ignore t :which-key "org")
+       "oa" '(org-agenda :which-key "org-agenda")
+       "oc" '(org-capture :which-key "org-capture")
+       "d" '(dired :which-key "dired")))
 
-              (use-package hydra)
-              (defhydra hydra-text-scale (:timeout 5)
-                "scale text"
-                ("j" text-scale-increase "in")
-                ("k" text-scale-decrease "out")
-                ("f" nil "finished" :exit t))
-              (jeff/leader-keys
-                "vs" '(hydra-text-scale/body :which-key "scale text"))
+    (use-package hydra)
+    (defhydra hydra-text-scale (:timeout 5)
+      "scale text"
+      ("j" text-scale-increase "in")
+      ("k" text-scale-decrease "out")
+      ("f" nil "finished" :exit t))
+    (jeff/leader-keys
+      "vs" '(hydra-text-scale/body :which-key "scale text"))
 
 
 #+end_src
-*  Ivy and Counsel
+* Ivy and Counsel
 #+begin_src emacs-lisp
     (use-package smex)
     ;; Ivy completion/Ivy adjacent items
@@ -183,6 +192,38 @@
     (use-package ivy-rich
       :init
       (ivy-rich-mode 1))
+#+end_src
+* Dired
+#+begin_src emacs-lisp
+         (use-package dired
+           :straight (:type built-in)
+           :ensure nil
+           :commands (dired dired-jump)
+           :bind (("C-x C-j" . dired-jump))
+           ;;:custom ((dired-listing-switches "-agho --group-directoryies-first"))
+           :config
+         (evil-collection-define-key 'normal 'dired-mode-map
+           "h" 'dired-single-up-directory
+           "l" 'dired-single-buffer))
+
+       (use-package dired-single)
+
+       (use-package all-the-icons-dired
+         :hook (dired-mode . all-the-icons-dired-mode)
+         :init (setq all-the-icons-dired-monochrome nil))
+
+       (use-package dired-open
+         :config
+         ;; Doesn't work as expected!
+         ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+         (setq dired-open-extensions '(("mkv" . "mpv"))))
+
+       (use-package dired-hide-dotfiles
+         :hook (dired-mode . dired-hide-dotfiles-mode)
+         :config
+         (evil-collection-define-key 'normal 'dired-mode-map
+           "H" 'dired-hide-dotfiles-mode)
+      ) 
 #+end_src
 * Helpful help viewer
 Tool for viewing function and key descriptions etc.
@@ -229,7 +270,7 @@ Tool for viewing function and key descriptions etc.
     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+;;    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
     )
 
 
@@ -296,6 +337,7 @@ Tool for viewing function and key descriptions etc.
      (list  "~/Nextcloud/org/TessNet.org"
             "~/Nextcloud/org/Review.org"
             "~/Nextcloud/org/TODO.org"
+            "~/Nextcloud/org/Habits.org"
             "~/Nextcloud/org/Journal.org"
             "~/Nextcloud/org/REFILE.org"))
   (setq org-refile-targets '((nil :maxlevel . 2)
@@ -334,29 +376,7 @@ Tool for viewing function and key descriptions etc.
         (quote ((sequence "TODO(t)" "PROJECT(p)" "NEXT(n)" "|" "DONE(d)")
                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
-
   (setq org-src-tab-acts-natively t)
-
-  (add-hook 'dired-mode-hook 'org-download-enable)
-
-       ; Enable habit tracking (and a bunch of other modules)
-       ;; (setq org-modules (quote (org-bbdb
-       ;;                                org-bibtex
-       ;;                                org-crypt
-       ;;                                org-gnus
-       ;;                                org-id
-       ;;                                org-info
-       ;;                                org-jsinfo
-       ;;                                org-habit
-       ;;                                org-inlinetask
-       ;;                                org-irc
-       ;;                                org-mew
-       ;;                                org-mhe
-       ;;                                org-protocol
-       ;;                                org-rmail
-       ;;                                org-vm
-       ;;                                org-wl
-       ;;                                org-w3m)))
 
        ; position the habit graph on the agenda to the right of the default
        (setq org-habit-graph-column 50)
