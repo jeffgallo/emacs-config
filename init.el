@@ -83,6 +83,9 @@
 
     ;; browse-kill-ring
   (use-package browse-kill-ring)
+  ;; Beacon mode
+(use-package beacon
+  :init (beacon-mode 1))
 
 ;; Evil mode
   (use-package evil
@@ -115,7 +118,7 @@
     :config
     (general-create-definer jeff/leader-keys
       :keymaps '(normal insert visual emacs)
-      :states 'normal
+      ;; :states 'normal
       :prefix "SPC"
       :global-prefix "C-SPC")
     (jeff/leader-keys
@@ -252,7 +255,6 @@
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
 ;;    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
     )
-
 
   (use-package org
     :hook (org-mode . jeff/org-mode-setup)

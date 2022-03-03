@@ -2,3 +2,10 @@ straight/
 auto-save-list/
 site-lisp/
 transient/
+recentf*
+~*
+/smex-items
+*.db
+/url/
+/bookmarks
+*~
