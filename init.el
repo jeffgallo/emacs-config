@@ -112,15 +112,21 @@
   (use-package evil-collection
     :after evil
     :ensure t
+    :init
+    (setq evil-collection-magit-use-z-for-folds nil)
     :config (evil-collection-init))
 
   (use-package general
     :config
+    (general-evil-setup)
+
     (general-create-definer jeff/leader-keys
-      :keymaps '(normal insert visual emacs)
-      ;; :states 'normal
+      :keymaps '(normal insert visual emacs org-agenda-mode-map)
+      ;;:states '(normal visual)
       :prefix "SPC"
-      :global-prefix "C-SPC")
+      :global-prefix "C-SPC"
+      :prefix-command 'tyrant-prefix-command
+      :prefix-map 'tyrant-prefix-map)
     (jeff/leader-keys
      "v" '(:ignore t :which-key "visuals")
      "vt" '(counsel-load-theme :which-key "choose theme")
@@ -135,7 +141,7 @@
      "o" '(:ignore t :which-key "org")
      "oa" '(org-agenda :which-key "org-agenda")
      "oc" '(org-capture :which-key "org-capture")
-     "d" '(dired :which-key "dired")))
+     "d" '(dired :which-key "dired"))) 
 
   (use-package hydra)
   (defhydra hydra-text-scale (:timeout 5)
