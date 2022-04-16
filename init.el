@@ -296,95 +296,98 @@
     :hook (org-mode . efs/org-mode-visual-fill))
 
 (use-package org-super-agenda
-  :after org-agenda
-  :config
-  (setq org-super-agenda-groups '(
-                                  ;;(:auto-group t)
-                                  (:name "Today"
-                                   :time-grid t
-                                   )
-                                  (:name "Projects"
-                                   :todo "PROJECT")
-                                  (:name "Tasks to Refile"
-                                   :and (:todo ("TODO" "NEXT" "PROJECT")
-                                         ;;:tag "REFILE"
-                                         )
-                                   )
-                                  (:name "Notes to Refile"
-                                   :and (
-                                         ;;:tag ("REFILE" "NOTE" "MEETING")
-                                         :not(:todo ("TODO" "NEXT" "PROJECT"))
-                                   ))
-                                  ))
-  (org-super-agenda-mode))
+    :after org-agenda
+    :config
+    (setq org-super-agenda-groups '(
+                                    ;;(:auto-group t)
+                                    (:name "Today"
+                                     :time-grid t
+                                     )
+                                    (:name "Projects"
+                                     :todo "PROJECT")
+                                    (:name "Tasks to Refile"
+                                     :and (:todo ("TODO" "NEXT" "PROJECT")
+                                           ;;:tag "REFILE"
+                                           )
+                                     )
+                                    (:name "Notes to Refile"
+                                     :and (
+                                           ;;:tag ("REFILE" "NOTE" "MEETING")
+                                           :not(:todo ("TODO" "NEXT" "PROJECT"))
+                                     ))
+                                    ))
+    (org-super-agenda-mode))
 
-;; ORG Mode
-(setq org-agenda-files
-   (list  "~/Nextcloud/org/TessNet.org"
-          "~/Nextcloud/org/Review.org"
-          "~/Nextcloud/org/TODO.org"
-          "~/Nextcloud/org/Habits.org"
-          "~/Nextcloud/org/Journal.org"
-          "~/Nextcloud/org/REFILE.org"))
-(setq org-refile-targets '((nil :maxlevel . 2)
-                              (org-agenda-files :maxlevel . 2)))
-(setq org-refile-use-outline-path t)
-(setq org-outline-path-complete-in-steps nil)
+  ;; ORG Mode
+  (setq jeff/org-agenda-files
+     (list  "~/Nextcloud/org/TessNet.org"
+            "~/Nextcloud/org/Review.org"
+            "~/Nextcloud/org/TODO.org"
+            "~/Nextcloud/org/Habits.org"
+            "~/Nextcloud/org/Chores.org"
+            "~/Nextcloud/org/Journal.org"
+            "~/Nextcloud/org/REFILE.org"))
+(setq org-agenda-files jeff/org-agenda-files)
+  
+  (setq org-refile-targets '((nil :maxlevel . 2)
+                                (org-agenda-files :maxlevel . 2)))
+  (setq org-refile-use-outline-path t)
+  (setq org-outline-path-complete-in-steps nil)
 
-(setq safe-local-variable-values
-  '((org-download-image-dir . "~/Nextcloud/org/Journal-Images")))
+  (setq safe-local-variable-values
+    '((org-download-image-dir . "~/Nextcloud/org/Journal-Images")))
 
-;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
- (setq org-capture-templates
-      (quote (("t" "todo" entry (file "~/Nextcloud/org/REFILE.org")
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("r" "respond" entry (file "~Nextcloud/org/REFILE.org")
-               "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-              ("n" "note" entry (file "~/Nextcloud/org/REFILE.org")
-               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-              ("j" "Journal" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
-               "* %?\n%U\n" :clock-in t :clock-resume t)
-              ("w" "org-protocol" entry (file "~/Nextcloud/org/REFILE.org")
-               "* TODO Review %c\n%U\n" :immediate-finish t)
-              ("m" "Meeting" entry (file "~/Nextcloud/org/REFILE.org")
-               "* Meeting with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("p" "Project" entry (file "~/Nextcloud/org/REFILE.org")
-               (file "~/Nextcloud/org/templates/ProjectTemplate.org") :clock-in t :clock-resume t)
-              ("W" "Weekly Review" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
-               (file "~/Nextcloud/org/templates/WeeklyReviewTemplate.org") :clock-in t :clock-resume t)
-              ("h" "Habit" entry (file "~/Nextcloud/org/REFILE.org")
-               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
+  ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
+   (setq org-capture-templates
+        (quote (("t" "todo" entry (file "~/Nextcloud/org/REFILE.org")
+                 "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+                ("r" "respond" entry (file "~Nextcloud/org/REFILE.org")
+                 "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+                ("n" "note" entry (file "~/Nextcloud/org/REFILE.org")
+                 "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+                ("j" "Journal" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
+                 "* %?\n%U\n" :clock-in t :clock-resume t)
+                ("w" "org-protocol" entry (file "~/Nextcloud/org/REFILE.org")
+                 "* TODO Review %c\n%U\n" :immediate-finish t)
+                ("m" "Meeting" entry (file "~/Nextcloud/org/REFILE.org")
+                 "* Meeting with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+                ("p" "Project" entry (file "~/Nextcloud/org/REFILE.org")
+                 (file "~/Nextcloud/org/templates/ProjectTemplate.org") :clock-in t :clock-resume t)
+                ("W" "Weekly Review" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
+                 (file "~/Nextcloud/org/templates/WeeklyReviewTemplate.org") :clock-in t :clock-resume t)
+                ("h" "Habit" entry (file "~/Nextcloud/org/REFILE.org")
+                 "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
 
-              )))
+                )))
 
-;; KEYWORDS
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "PROJECT(p)" "NEXT(n)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+  ;; KEYWORDS
+  (setq org-todo-keywords
+        (quote ((sequence "TODO(t)" "PROJECT(p)" "NEXT(n)" "|" "DONE(d)")
+                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
-(setq org-src-tab-acts-natively t)
+  (setq org-src-tab-acts-natively t)
 
-     ; position the habit graph on the agenda to the right of the default
-     (setq org-habit-graph-column 50)
-         ;; Toggle line mode for org-agenda
-         (add-hook 'org-agenda-mode-hook
-                   (lambda ()
-                     (visual-line-mode -1)
-                     (toggle-truncate-lines 1)))
+       ; position the habit graph on the agenda to the right of the default
+       (setq org-habit-graph-column 50)
+           ;; Toggle line mode for org-agenda
+           (add-hook 'org-agenda-mode-hook
+                     (lambda ()
+                       (visual-line-mode -1)
+                       (toggle-truncate-lines 1)))
 
-         ;; Set agenda view columns
-         (setq org-agenda-tags-column 80)
+           ;; Set agenda view columns
+           (setq org-agenda-tags-column 80)
 
-           ;; Standard key bindings
-           (global-set-key "\C-cl" 'org-store-link)
-           (global-set-key "\C-ca" 'org-agenda)
-           (global-set-key "\C-cb" 'org-iswitchb)
-           (global-set-key "\C-cc" 'org-capture)
-           (global-set-key (kbd "C-c o")
-                           (lambda () (interactive) (find-file "~/Nextcloud/org/TODO.org")))
-           (setq org-log-done t)
-           (setq org-directory "~/Nextcloud/org")
-           (setq org-default-notes-file "~/Nextcloud/org/REFILE.org")
+             ;; Standard key bindings
+             (global-set-key "\C-cl" 'org-store-link)
+             (global-set-key "\C-ca" 'org-agenda)
+             (global-set-key "\C-cb" 'org-iswitchb)
+             (global-set-key "\C-cc" 'org-capture)
+             (global-set-key (kbd "C-c o")
+                             (lambda () (interactive) (find-file "~/Nextcloud/org/TODO.org")))
+             (setq org-log-done t)
+             (setq org-directory "~/Nextcloud/org")
+             (setq org-default-notes-file "~/Nextcloud/org/REFILE.org")
 
 (use-package org-roam
     :ensure t
@@ -436,7 +439,9 @@
   "nI" '(org-roam-insert-immediate :which-key "org-roam-insert-immediate")
   "nj" '(org-roam-dailies-capture-today :which-key "org-roam-dailies-capture-today")
   "nl" '(org-roam-buffer-toggle :which-key "org-roam-buffer-toggle")
-  "nr" '(jeff/org-roam-refresh-agenda-list :which-key "org-roam-refresh-agenda-list"))
+  "nr" '(jeff/org-roam-refresh-agenda-list :which-key "org-roam-refresh-agenda-list")
+  "nb" '(jeff/org-roam-capture-inbox :which-key "org-roam-capture-inbox")
+  "nt" '(jeff/org-roam-capture-task :which-key "org-roam-capture-task"))
 
 (defun org-roam-insert-immediate (arg &rest args)
 (interactive "P")
@@ -457,9 +462,88 @@
 
  (defun jeff/org-roam-refresh-agenda-list ()
    (interactive)
-   (setq org-agenda-files (append org-agenda-files (jeff/org-roam-list-notes-by-tag "Project"))))
+   (setq org-agenda-files (append jeff/org-agenda-files (jeff/org-roam-list-notes-by-tag "Project")))
+   (setq org-refile-targets '((nil :maxlevel . 2)
+                            (org-agenda-files :maxlevel . 2))))
 
 (jeff/org-roam-refresh-agenda-list)
+
+(defun jeff/org-roam-project-finalize-hook ()
+  "Adds the captured project file to `org-agenda-files' if the
+capture was not aborted."
+  ;; Remove the hook since it was added temporarily
+  (remove-hook 'org-capture-after-finalize-hook #'jeff/org-roam-project-finalize-hook)
+
+  ;; Add project file to the agenda list if the capture was confirmed
+  (unless org-note-abort
+    (with-current-buffer (org-capture-get :buffer)
+      (add-to-list 'org-agenda-files (buffer-file-name)))))
+
+(defun jeff/org-roam-find-project ()
+  (interactive)
+  ;; Add the project file to the agenda after capture is finished
+  (add-hook 'org-capture-after-finalize-hook #'jeff/org-roam-project-finalize-hook)
+
+  ;; Select a project file to open, creating it if necessary
+  (org-roam-node-find
+   nil
+   nil
+   (jeff/org-roam-filter-by-tag "Project")
+   :templates
+   '(("p" "project" plain
+       (file "~/Nextcloud/org/templates/ProjectTemplate.org")
+       :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
+       :unnarrowed t))))
+
+(global-set-key (kbd "C-c n p") #'jeff/org-roam-find-project)
+
+(defun jeff/org-roam-capture-inbox ()
+  (interactive)
+  (org-roam-capture- :node (org-roam-node-create)
+                     :templates '(("i" "inbox" plain "* %?"
+                                  :if-new (file+head "Inbox.org" "#+title: Inbox\n")))))
+
+(global-set-key (kbd "C-c n b") #'my/org-roam-capture-inbox)
+
+(defun jeff/org-roam-capture-task ()
+  (interactive)
+  ;; Add the project file to the agenda after capture is finished
+  (add-hook 'org-capture-after-finalize-hook #'jeff/org-roam-project-finalize-hook)
+
+  ;; Capture the new task, creating the project file if necessary
+  (org-roam-capture- :node (org-roam-node-read
+                            nil
+                            (jeff/org-roam-filter-by-tag "Project"))
+                     :templates '(("p" "project" plain "** TODO %?"
+                                   :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                                          "#+title: ${title}\n#+category: ${title}\n#+filetags: Project"
+                                                          ("Tasks"))))))
+
+(global-set-key (kbd "C-c n t") #'jeff/org-roam-capture-task)
+
+(defun jeff/org-roam-copy-todo-to-today ()
+  (interactive)
+  (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+        (org-roam-dailies-capture-templates
+          '(("t" "tasks" entry "%?"
+             :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+        (org-after-refile-insert-hook #'save-buffer)
+        today-file
+        pos)
+    (save-window-excursion
+      (org-roam-dailies--capture (current-time) t)
+      (setq today-file (buffer-file-name))
+      (setq pos (point)))
+
+    ;; Only refile if the target file is different than the current file
+    (unless (equal (file-truename today-file)
+                   (file-truename (buffer-file-name)))
+      (org-refile nil nil (list "Tasks" today-file nil pos)))))
+
+(add-to-list 'org-after-todo-state-change-hook
+             (lambda ()
+               (when (equal org-state "DONE")
+                 (jeff/org-roam-copy-todo-to-today))))
 
 (use-package elfeed
   :bind
