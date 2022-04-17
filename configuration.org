@@ -96,70 +96,73 @@
 #+end_src
 * EVIL and General leader keys
 #+begin_src emacs-lisp
-        ;; Evil mode
-        (use-package evil
-          :ensure t
-          :init
-          (setq evil-want-integration nil)
-          (setq evil-want-C-i-jump nil)
-          (setq evil-want-keybinding nil)
-          (setq evil-want-C-u-scroll t)
-          :config
-          (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    ;; Evil mode
+    (use-package evil
+      :ensure t
+      :init
+      (setq evil-want-integration nil)
+      (setq evil-want-C-i-jump nil)
+      (setq evil-want-keybinding nil)
+      (setq evil-want-C-u-scroll t)
+      :config
+      (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-          (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-          (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+      (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+      (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-          (evil-set-initial-state 'messages-buffer-mode 'normal)
-          (evil-set-initial-state 'dashboard-mode 'normal)
-          (evil-set-initial-state 'elfeed-mode 'emacs)
-      (evil-set-initial-state 'pocket-reader-mode 'emacs)
+      (evil-set-initial-state 'messages-buffer-mode 'normal)
+      (evil-set-initial-state 'dashboard-mode 'normal)
+      (evil-set-initial-state 'elfeed-mode 'emacs)
+  (evil-set-initial-state 'pocket-reader-mode 'emacs)
 
-          (evil-mode 1)
-          )
+      (evil-mode 1)
+      )
 
-        (use-package evil-collection
-          :after evil
-          :ensure t
-          :init
-          (setq evil-collection-magit-use-z-for-folds nil)
-          :config (evil-collection-init))
+    (use-package evil-collection
+      :after evil
+      :ensure t
+      :init
+      (setq evil-collection-magit-use-z-for-folds nil)
+      :config (evil-collection-init))
 
-        (use-package general
-          :config
-          (general-evil-setup)
+    (use-package general
+      :config
+      (general-evil-setup)
 
-          (general-create-definer jeff/leader-keys
-            :keymaps '(normal insert visual emacs org-agenda-mode-map)
-            ;;:states '(normal visual)
-            :prefix "SPC"
-            :global-prefix "C-SPC"
-            :prefix-command 'tyrant-prefix-command
-            :prefix-map 'tyrant-prefix-map)
-          (jeff/leader-keys
-           "v" '(:ignore t :which-key "visuals")
-           "vt" '(counsel-load-theme :which-key "choose theme")
-           "b" '(:ignore t :which-key "buffers")
-           "bs" '(counsel-switch-buffer :which-key "switch buffer")
-           "bi" '(ibuffer :which-key "buffers")
-           "bk" '(kill-current-buffer :which-key "kill current buffer")
-           "bK" '(kill-buffer :which-key "kill buffer from list")
-           "r" '(:ignore t :which-key "read")
-           "re" '(elfeed :which-key "elfeed")
-           "rp" '(pocket-reader :which-key "pocket")
-           "o" '(:ignore t :which-key "org")
-           "oa" '(org-agenda :which-key "org-agenda")
-           "oc" '(org-capture :which-key "org-capture")
-           "d" '(dired :which-key "dired"))) 
+      (general-create-definer jeff/leader-keys
+        :keymaps '(normal insert visual emacs org-agenda-mode-map)
+        ;;:states '(normal visual)
+        :prefix "SPC"
+        :global-prefix "C-SPC"
+        :prefix-command 'tyrant-prefix-command
+        :prefix-map 'tyrant-prefix-map)
+      (jeff/leader-keys
+       "v" '(:ignore t :which-key "visuals")
+       "vt" '(counsel-load-theme :which-key "choose theme")
+       "f" '(:ignore t :which-key "find-files")
+       "ff" '(find-file :which-key "find-file")
+       "fp" '(find-file-projectile :which "find-file-projectile")
+       "b" '(:ignore t :which-key "buffers")
+       "bs" '(counsel-switch-buffer :which-key "switch buffer")
+       "bi" '(ibuffer :which-key "buffers")
+       "bk" '(kill-current-buffer :which-key "kill current buffer")
+       "bK" '(kill-buffer :which-key "kill buffer from list")
+       "r" '(:ignore t :which-key "read")
+       "re" '(elfeed :which-key "elfeed")
+       "rp" '(pocket-reader :which-key "pocket")
+       "o" '(:ignore t :which-key "org")
+       "oa" '(org-agenda :which-key "org-agenda")
+       "oc" '(org-capture :which-key "org-capture")
+       "d" '(dired :which-key "dired"))) 
 
-        (use-package hydra)
-        (defhydra hydra-text-scale (:timeout 5)
-          "scale text"
-          ("j" text-scale-increase "in")
-          ("k" text-scale-decrease "out")
-          ("f" nil "finished" :exit t))
-        (jeff/leader-keys
-          "vs" '(hydra-text-scale/body :which-key "scale text"))
+    (use-package hydra)
+    (defhydra hydra-text-scale (:timeout 5)
+      "scale text"
+      ("j" text-scale-increase "in")
+      ("k" text-scale-decrease "out")
+      ("f" nil "finished" :exit t))
+    (jeff/leader-keys
+      "vs" '(hydra-text-scale/body :which-key "scale text"))
 
 
 #+end_src
@@ -416,59 +419,63 @@ Tool for viewing function and key descriptions etc.
 #+end_src
 * Org-Roam
 #+begin_src emacs-lisp
-        (use-package org-roam
-            :ensure t
-            :demand t
-            :custom
-            (org-roam-directory (file-truename "~/Nextcloud/org/roam/"))
-            (org-roam-completion-everywhere t)
-            (org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
-           :unnarrowed t)
-          ("l" "programming language" plain
-           (file "~/Nextcloud/org/templates/programming-language.org")
-           :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
-           :unnarrowed t)
-          ("b" "book notes" plain
-           (file "~/Nextcloud/org/templates/book-notes.org")
-           :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
-           :unnarrowed t)
-          ("p" "project" plain
+  (use-package org-roam
+      :ensure t
+      :demand t
+      :custom
+      (org-roam-directory (file-truename "~/Nextcloud/org/roam/"))
+      (org-roam-completion-everywhere t)
+      (org-roam-capture-templates
+  '(("d" "default" plain
+     "%?"
+     :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
+     :unnarrowed t)
+    ("l" "programming language" plain
+     (file "~/Nextcloud/org/templates/programming-language.org")
+     :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
+     :unnarrowed t)
+    ("b" "book notes" plain
+     (file "~/Nextcloud/org/templates/book-notes.org")
+     :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
+     :unnarrowed t)
+    ("p" "tessnet project" plain
+     (file "~/Nextcloud/org/templates/TessNetProjectTemplate.org")
+     :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: :Project: :TESSNET: :work:\n")
+     :unnarrowed t)
+     ("P" "project" plain
            (file "~/Nextcloud/org/templates/ProjectTemplate.org")
            :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
            :unnarrowed t)
-          ))
+    ))
 
-            :bind (("C-c n l" . org-roam-buffer-toggle)
-                 ("C-c n f" . org-roam-node-find)
-                 ("C-c n g" . org-roam-graph)
-                 ("C-c n i" . org-roam-node-insert)
-                 ("C-c n I" . org-roam-insert-immediate)
-                 ("C-c n c" . org-roam-capture)
-                 ;; Dailies
-                 ("C-c n j" . org-roam-dailies-capture-today)
-                 :map org-mode-map
-                 ("C-M-y" . completion-at-point))
-              :config
-          ;; If you're using a vertical completion framework, you might want a more informative completion interface
-        (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-        (org-roam-db-autosync-mode)
-        ;; If using org-roam-protocol
-        (require 'org-roam-protocol))
-        (jeff/leader-keys
-          "n" '(:ignore t :which-key "org-roam-map")
-          "nc" '(org-roam-capture :which-key "org-roam-capture")
-          "nf" '(org-roam-node-find :which-key "org-roam-node-find")
-          "ng" '(org-roam-graph :which-key "org-roam-graph")
-          "ni" '(org-roam-node-insert :which-key "org-roam-node-insert")
-          "nI" '(org-roam-insert-immediate :which-key "org-roam-insert-immediate")
-          "nj" '(org-roam-dailies-capture-today :which-key "org-roam-dailies-capture-today")
-          "nl" '(org-roam-buffer-toggle :which-key "org-roam-buffer-toggle")
-          "nr" '(jeff/org-roam-refresh-agenda-list :which-key "org-roam-refresh-agenda-list")
-          "nb" '(jeff/org-roam-capture-inbox :which-key "org-roam-capture-inbox")
-          "nt" '(jeff/org-roam-capture-task :which-key "org-roam-capture-task"))
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n I" . org-roam-insert-immediate)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today)
+           :map org-mode-map
+           ("C-M-y" . completion-at-point))
+        :config
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+  (jeff/leader-keys
+    "n" '(:ignore t :which-key "org-roam-map")
+    "nc" '(org-roam-capture :which-key "org-roam-capture")
+    "nf" '(org-roam-node-find :which-key "org-roam-node-find")
+    "ng" '(org-roam-graph :which-key "org-roam-graph")
+    "ni" '(org-roam-node-insert :which-key "org-roam-node-insert")
+    "nI" '(org-roam-insert-immediate :which-key "org-roam-insert-immediate")
+    "nj" '(org-roam-dailies-capture-today :which-key "org-roam-dailies-capture-today")
+    "nl" '(org-roam-buffer-toggle :which-key "org-roam-buffer-toggle")
+    "nr" '(jeff/org-roam-refresh-agenda-list :which-key "org-roam-refresh-agenda-list")
+    "nb" '(jeff/org-roam-capture-inbox :which-key "org-roam-capture-inbox")
+    "nt" '(jeff/org-roam-capture-task :which-key "org-roam-capture-task"))
 #+end_src
 ** Org Roam Insert Immediate
 bound to  "C-C n I" above

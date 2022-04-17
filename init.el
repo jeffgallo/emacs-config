@@ -130,6 +130,9 @@
     (jeff/leader-keys
      "v" '(:ignore t :which-key "visuals")
      "vt" '(counsel-load-theme :which-key "choose theme")
+     "f" '(:ignore t :which-key "find-files")
+     "ff" '(find-file :which-key "find-file")
+     "fp" '(find-file-projectile :which "find-file-projectile")
      "b" '(:ignore t :which-key "buffers")
      "bs" '(counsel-switch-buffer :which-key "switch buffer")
      "bi" '(ibuffer :which-key "buffers")
@@ -408,10 +411,14 @@
    (file "~/Nextcloud/org/templates/book-notes.org")
    :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
    :unnarrowed t)
-  ("p" "project" plain
-   (file "~/Nextcloud/org/templates/ProjectTemplate.org")
-   :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
+  ("p" "tessnet project" plain
+   (file "~/Nextcloud/org/templates/TessNetProjectTemplate.org")
+   :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: :Project: :TESSNET: :work:\n")
    :unnarrowed t)
+   ("P" "project" plain
+         (file "~/Nextcloud/org/templates/ProjectTemplate.org")
+         :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
+         :unnarrowed t)
   ))
 
     :bind (("C-c n l" . org-roam-buffer-toggle)
