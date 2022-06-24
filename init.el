@@ -29,6 +29,9 @@
 (setq user-full-name "Jeff Gallo"
       user-mail-address "jeffreyfgallo@gmail.com")
 
+;; Encoding
+(modify-coding-system-alist 'file "" 'utf-8-unix)
+
 ;; Startup
 (setq inhibit-startup-message t
           cursor-type 'bar)
@@ -63,7 +66,9 @@
       :init (load-theme 'doom-nord t))
     ;; Note: the first time you load this config you'll need to run the following interactively:
     ;; M-x all-the-icons-install-fonts
-(use-package all-the-icons)
+(defvar all-the-icons-p "c:/Users/Jeff/AppData/Roaming/.emacs.d/fonts/")
+(use-package all-the-icons
+  :load-path all-the-icons-p)
 (use-package doom-modeline
       :ensure t
       :init (doom-modeline-mode 1))
@@ -323,13 +328,13 @@
 
   ;; ORG Mode
   (setq jeff/org-agenda-files
-     (list  "~/Nextcloud/org/TessNet.org"
-            "~/Nextcloud/org/Review.org"
-            "~/Nextcloud/org/TODO.org"
-            "~/Nextcloud/org/Habits.org"
-            "~/Nextcloud/org/Chores.org"
-            "~/Nextcloud/org/Journal.org"
-            "~/Nextcloud/org/REFILE.org"))
+     (list  "c:/Users/Jeff/Nextcloud/org/TessNet.org"
+            "c:/Users/Jeff/Nextcloud/org/Review.org"
+            "c:/Users/Jeff/Nextcloud/org/TODO.org"
+            "c:/Users/Jeff/Nextcloud/org/Habits.org"
+            "c:/Users/Jeff/Nextcloud/org/Chores.org"
+            "c:/Users/Jeff/Nextcloud/org/Journal.org"
+            "c:/Users/Jeff/Nextcloud/org/REFILE.org"))
 (setq org-agenda-files jeff/org-agenda-files)
   
   (setq org-refile-targets '((nil :maxlevel . 2)
@@ -338,27 +343,27 @@
   (setq org-outline-path-complete-in-steps nil)
 
   (setq safe-local-variable-values
-    '((org-download-image-dir . "~/Nextcloud/org/Journal-Images")))
+    '((org-download-image-dir . "c:/Users/Jeff/Nextcloud/org/Journal-Images")))
 
   ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
    (setq org-capture-templates
-        (quote (("t" "todo" entry (file "~/Nextcloud/org/REFILE.org")
+        (quote (("t" "todo" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
                  "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
                 ("r" "respond" entry (file "~Nextcloud/org/REFILE.org")
                  "* NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
-                ("n" "note" entry (file "~/Nextcloud/org/REFILE.org")
+                ("n" "note" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
                  "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
-                ("j" "Journal" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
+                ("j" "Journal" entry (file+olp+datetree "c:/Users/Jeff/Nextcloud/org/Journal.org")
                  "* %?\n%U\n" :clock-in t :clock-resume t)
-                ("w" "org-protocol" entry (file "~/Nextcloud/org/REFILE.org")
+                ("w" "org-protocol" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
                  "* TODO Review %c\n%U\n" :immediate-finish t)
-                ("m" "Meeting" entry (file "~/Nextcloud/org/REFILE.org")
+                ("m" "Meeting" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
                  "* Meeting with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-                ("p" "Project" entry (file "~/Nextcloud/org/REFILE.org")
-                 (file "~/Nextcloud/org/templates/ProjectTemplate.org") :clock-in t :clock-resume t)
-                ("W" "Weekly Review" entry (file+olp+datetree "~/Nextcloud/org/Journal.org")
-                 (file "~/Nextcloud/org/templates/WeeklyReviewTemplate.org") :clock-in t :clock-resume t)
-                ("h" "Habit" entry (file "~/Nextcloud/org/REFILE.org")
+                ("p" "Project" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
+                 (file "c:/Users/Jeff/Nextcloud/org/templates/ProjectTemplate.org") :clock-in t :clock-resume t)
+                ("W" "Weekly Review" entry (file+olp+datetree "c:/Users/Jeff/Nextcloud/org/Journal.org")
+                 (file "c:/Users/Jeff/Nextcloud/org/templates/WeeklyReviewTemplate.org") :clock-in t :clock-resume t)
+                ("h" "Habit" entry (file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
                  "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n")
 
                 )))
@@ -387,16 +392,16 @@
              (global-set-key "\C-cb" 'org-iswitchb)
              (global-set-key "\C-cc" 'org-capture)
              (global-set-key (kbd "C-c o")
-                             (lambda () (interactive) (find-file "~/Nextcloud/org/TODO.org")))
+                             (lambda () (interactive) (find-file "c:/Users/Jeff/Nextcloud/org/TODO.org")))
              (setq org-log-done t)
-             (setq org-directory "~/Nextcloud/org")
-             (setq org-default-notes-file "~/Nextcloud/org/REFILE.org")
+             (setq org-directory "c:/Users/Jeff/Nextcloud/org")
+             (setq org-default-notes-file "c:/Users/Jeff/Nextcloud/org/REFILE.org")
 
 (use-package org-roam
     :ensure t
     :demand t
     :custom
-    (org-roam-directory (file-truename "~/Nextcloud/org/roam/"))
+    (org-roam-directory (file-truename "c:/Users/Jeff/Nextcloud/org/roam/"))
     (org-roam-completion-everywhere t)
     (org-roam-capture-templates
 '(("d" "default" plain
@@ -404,19 +409,19 @@
    :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
    :unnarrowed t)
   ("l" "programming language" plain
-   (file "~/Nextcloud/org/templates/programming-language.org")
+   (file "c:/Users/Jeff/Nextcloud/org/templates/programming-language.org")
    :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
    :unnarrowed t)
   ("b" "book notes" plain
-   (file "~/Nextcloud/org/templates/book-notes.org")
+   (file "c:/Users/Jeff/Nextcloud/org/templates/book-notes.org")
    :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n")
    :unnarrowed t)
   ("p" "tessnet project" plain
-   (file "~/Nextcloud/org/templates/TessNetProjectTemplate.org")
+   (file "c:/Users/Jeff/Nextcloud/org/templates/TessNetProjectTemplate.org")
    :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: :Project: :TESSNET: :work:\n")
    :unnarrowed t)
    ("P" "project" plain
-         (file "~/Nextcloud/org/templates/ProjectTemplate.org")
+         (file "c:/Users/Jeff/Nextcloud/org/templates/ProjectTemplate.org")
          :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
          :unnarrowed t)
   ))
@@ -498,7 +503,7 @@ capture was not aborted."
    (jeff/org-roam-filter-by-tag "Project")
    :templates
    '(("p" "project" plain
-       (file "~/Nextcloud/org/templates/ProjectTemplate.org")
+       (file "c:/Users/Jeff/Nextcloud/org/templates/ProjectTemplate.org")
        :if-new (file+head "%<%Y%m%d-%H%M%S>-${slug}.org" "#+title: ${title}\n#+category: ${title}\n#+filetags: Project\n")
        :unnarrowed t))))
 
@@ -564,7 +569,7 @@ capture was not aborted."
 (use-package elfeed-org
   :config
   (elfeed-org)
-  (setq rmh-elfeed-org-files (list "~/Nextcloud/elfeed.org")))
+  (setq rmh-elfeed-org-files (list "c:/Users/Jeff/Nextcloud/elfeed.org")))
   (add-hook 'elfeed-search-mode-hook 'turn-off-evil-mode)
   (add-hook 'elfeed-show-mode-hook 'turn-off-evil-mode)
 
@@ -621,8 +626,25 @@ capture was not aborted."
 
 (define-key elfeed-show-mode-map (kbd "B") 'jeff/elfeed-show-visit-gui)
 
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
+(setq ispell-program-name "hunspell")
+
+  (setq ispell-hunspell-dict-paths-alist
+
+  '(("en_US" "c:/Users/Jeff/AppData/Roaming/hunspell/dictionary/en_US.aff")))
+
+  (setq ispell-local-dictionary "en_US")
+
+  (setq ispell-local-dictionary-alist
+
+  ;; Please note the list `("-d" "en_US")` contains ACTUAL parameters passed to hunspell
+
+  ;; You could use `("-d" "en_US,en_US-med")` to check with multiple dictionaries
+
+  '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8)))
+(flyspell-mode 1)
+
+  ;; (dolist (hook '(text-mode-hook))
+      ;; (add-hook hook (lambda () (flyspell-mode 1))))
 
 (defun jeff/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
@@ -663,7 +685,11 @@ capture was not aborted."
   (company-show-numbers t))
 
 (use-package company-box
-  :hook (company-mode . company-box-mode))
+  :hook (company-mode . company-box-mode)
+  :custom
+  (setq company-box-icons-alist 'company-box-icons-all-the-icons)
+  (company-box))
+
 
 (global-company-mode)
  (let ((map company-active-map))
@@ -687,8 +713,8 @@ capture was not aborted."
   :config
   (setq typescript-indent-level 2))
 
-(setq plantuml-jar-path "~/.java/plantuml-1.2021.16.jar")
-(setq org-plantuml-jar-path "~/.java/plantuml-1.2021.16.jar")
+(setq plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2021.16.jar")
+(setq org-plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2021.16.jar")
 (setq plantuml-default-exec-mode 'jar)
 
 (use-package magit
@@ -719,8 +745,8 @@ capture was not aborted."
   :bind-keymap
   ("C-c p" . projectile-command-map)
   :init
-  (when (file-directory-p "~/Repos")
-    (setq projectile-project-search-path '("~/Repos")))
+  (when (file-directory-p "c:/Repos")
+    (setq projectile-project-search-path '("c:/Repos")))
   (setq projectile-switch-project-action #'projectile-dired))
 (use-package rg
   :ensure t)
@@ -758,8 +784,8 @@ capture was not aborted."
 
 ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
   ;;(set-frame-parameter (selected-frame) 'alpha <both>)
-  (set-frame-parameter (selected-frame) 'alpha '(92 . 60))
-  (add-to-list 'default-frame-alist '(alpha . (92 . 60)))
+  (set-frame-parameter (selected-frame) 'alpha '(97 . 80))
+  (add-to-list 'default-frame-alist '(alpha . (97 . 80)))
 
 (defun toggle-transparency ()
   (interactive)
@@ -771,7 +797,7 @@ capture was not aborted."
                     ;; Also handle undocumented (<active> <inactive>) form.
                     ((numberp (cadr alpha)) (cadr alpha)))
               100)
-         '(92 . 60) '(100 . 100)))))
+         '(97 . 80) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 (setq
