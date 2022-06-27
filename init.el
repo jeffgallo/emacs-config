@@ -31,59 +31,80 @@
 
 ;; Startup
 (setq inhibit-startup-message t
-          cursor-type 'bar)
-    ;; Confirm on quit
-    (setq confirm-kill-processes nil)
+      cursor-type 'bar)
+;; Confirm on quit
+(setq confirm-kill-processes nil)
 
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
-    (set-fringe-mode 5)
-    (when window-system (set-frame-size (selected-frame) 120 80))
-    (defun display-line-numbers-hook ()
-      (display-line-numbers-mode t)
-      )
-    (add-hook 'prog-mode-hook 'display-line-numbers-hook)
-    (setq display-line-numbers-type 'relative)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-fringe-mode 5)
+(when window-system (set-frame-size (selected-frame) 120 80))
+(defun display-line-numbers-hook ()
+  (display-line-numbers-mode t)
+  )
+(add-hook 'prog-mode-hook 'display-line-numbers-hook)
+(setq display-line-numbers-type 'relative)
 
-    ;; Set up the visible bell
-    (setq visible-bell t)
-    ;; Faces
-    (defvar jeff/default-font-size 110)
-    (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
-    ;; Set the fixed pitch face
-    (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
-    ;; Set the variable pitch face
-    (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
-    ;; Add a theme for eye-ease
-    ;; (use-package nord-theme
-    ;;   :ensure t
-    ;;   :config (load-theme 'nord t))
-    (use-package doom-themes
-      :init (load-theme 'doom-nord t))
-    ;; Note: the first time you load this config you'll need to run the following interactively:
-    ;; M-x all-the-icons-install-fonts
+;; Set up the visible bell
+(setq visible-bell t)
+;; Faces
+(defvar jeff/default-font-size 110)
+(set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
+;; Add a theme for eye-ease
+(use-package modus-themes
+  :ensure
+  :init
+  (setq modus-themes-italic-constructs t
+	modus-themes-bold-constructs nil
+	modus-themes-syntax '(faint)
+	modus-themes-mode-line '(accented borderless)
+	modus-themes-paren-match '(bold intense)
+	modus-themes-prompts '(bold intense)
+	modus-themes-region '(bg-only no-extend)
+	modus-themes-org-blocks 'tinted-background
+	modus-themes-scale-headings t
+	modus-themes-headings
+	'((1 . (rainbow overline background 1.4))
+	(2 . (rainbow background 1.3))
+	(3 . (rainbow bold 1.2))
+	(t . (semilight 1.1))))
+
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-vivendi))
+;; (use-package nord-theme
+;;   :ensure t
+;;   :config (load-theme 'nord t))
+;; (use-package doom-themes
+;;   :init (load-theme 'doom-nord t))
+;; Note: the first time you load this config you'll need to run the following interactively:
+;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 (use-package doom-modeline
-      :ensure t
-      :init (doom-modeline-mode 1))
+  :ensure t
+  :init (doom-modeline-mode 1))
 (use-package rainbow-delimiters
-      :hook (prog-mode . rainbow-delimiters-mode))
+  :hook (prog-mode . rainbow-delimiters-mode))
 (use-package paren
   :straight (:type built-in)
   :ensure nil
   :config
   (show-paren-mode +1))
 
-  (use-package which-key
-      :init (which-key-mode)
-      :diminish which-key-mode
-      :config
-      (setq which-key-idle-delay 1))
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
 
-    ;; browse-kill-ring
-  (use-package browse-kill-ring)
-  ;; Beacon mode
+;; browse-kill-ring
+(use-package browse-kill-ring)
+;; Beacon mode
 (use-package beacon
   :init (beacon-mode 1))
 
@@ -234,7 +255,7 @@
 (global-set-key (kbd "C-h C") #'helpful-command)
 
 (defun jeff/org-mode-setup ()
-    (org-indent-mode)
+   ;; (org-indent-mode)
     (variable-pitch-mode 1)
     (visual-line-mode 1))
 
@@ -270,7 +291,8 @@
     :config
     (setq org-ellipsis " ▾"
           org-hide-emphasis-markers t)
-    (jeff/org-mode-font-setup))
+    ;;(jeff/org-mode-font-setup)
+    )
 
   (use-package org-bullets
     :after org
@@ -663,7 +685,10 @@ capture was not aborted."
   (company-show-numbers t))
 
 (use-package company-box
-  :hook (company-mode . company-box-mode))
+  :hook (company-mode . company-box-mode)
+  :custom
+  (setq company-box-icons-alist 'company-box-all-the-icons)
+  (company-box))
 
 (global-company-mode)
  (let ((map company-active-map))
