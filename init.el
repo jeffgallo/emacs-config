@@ -267,13 +267,13 @@
 
   ;; Set faces for heading levels
   (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1)))
   (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
@@ -290,9 +290,10 @@
     :hook (org-mode . jeff/org-mode-setup)
     :config
     (setq org-ellipsis " ▾"
-          org-hide-emphasis-markers t)
+	  org-hide-emphasis-markers t)
     ;;(jeff/org-mode-font-setup)
     )
+(setq org-clock-sound "~/Downloads/elevator-announcement-bells.wav")
 
   (use-package org-bullets
     :after org
@@ -314,7 +315,7 @@
 
   (defun efs/org-mode-visual-fill ()
     (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
+	  visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
