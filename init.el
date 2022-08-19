@@ -59,33 +59,33 @@
       ;; Set the variable pitch face
       (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
       ;; Add a theme for eye-ease
-  (use-package modus-themes
-   :ensure
-   :init
-   (setq modus-themes-italic-constructs t
-          modus-themes-bold-constructs nil
-          modus-themes-syntax '(faint)
-          modus-themes-mode-line '(accented borderless)
-          modus-themes-paren-match '(bold intense)
-          modus-themes-prompts '(bold intense)
-          modus-themes-region '(bg-only no-extend)
-          modus-themes-org-blocks 'tinted-background
-          modus-themes-scale-headings t
-          modus-themes-headings
-          '((1 . (rainbow overline background 1.4))
-          (2 . (rainbow background 1.3))
-          (3 . (rainbow bold 1.2))
-          (t . (semilight 1.1))))
+  ;; (use-package modus-themes
+  ;;  :ensure
+  ;;  :init
+  ;;  (setq modus-themes-italic-constructs t
+  ;;         modus-themes-bold-constructs nil
+  ;;         modus-themes-syntax '(faint)
+  ;;         modus-themes-mode-line '(accented borderless)
+  ;;         modus-themes-paren-match '(bold intense)
+  ;;         modus-themes-prompts '(bold intense)
+  ;;         modus-themes-region '(bg-only no-extend)
+  ;;         modus-themes-org-blocks 'tinted-background
+  ;;         modus-themes-scale-headings t
+  ;;         modus-themes-headings
+  ;;         '((1 . (rainbow overline background 1.4))
+  ;;         (2 . (rainbow background 1.3))
+  ;;         (3 . (rainbow bold 1.2))
+  ;;         (t . (semilight 1.1))))
 
-   (modus-themes-load-themes)
-   :config
-   (modus-themes-load-vivendi))
-      ;; (use-package nord-theme
-      ;;   :ensure t
-      ;;   :config (load-theme 'nord t))
-      ;; (use-package doom-themes
-      ;;   :init (load-theme 'doom-nord t))
-      ;; Note: the first time you load this config you'll need to run the following interactively:
+  ;;  (modus-themes-load-themes)
+  ;;  :config
+  ;;  (modus-themes-load-vivendi))
+  ;; (use-package nord-theme
+  ;;       :ensure t
+  ;;       :config (load-theme 'nord t))
+      (use-package doom-themes
+        :init (load-theme 'doom-nord t))
+     ;; Note: the first time you load this config you'll need to run the following interactively:
       ;; M-x all-the-icons-install-fonts
   (defvar all-the-icons-p "c:/Users/Jeff/AppData/Roaming/.emacs.d/fonts/")
   (use-package all-the-icons
@@ -264,72 +264,73 @@
 (global-set-key (kbd "C-h C") #'helpful-command)
 
 (defun jeff/org-mode-setup ()
-    (org-indent-mode)
-    ;;(variable-pitch-mode 1)
-    (visual-line-mode 1))
+     (org-indent-mode)
+     ;;(variable-pitch-mode 1)
+     (visual-line-mode 1))
 
-  (defun jeff/org-mode-font-setup ()
-    ;; Replace list hyphen with dot
-    ;; (font-lock-add-keywords 'org-mode
-    ;;                         '(("^ *\\([-]\\) "
-    ;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+   (defun jeff/org-mode-font-setup ()
+     ;; Replace list hyphen with dot
+     ;; (font-lock-add-keywords 'org-mode
+     ;;                         '(("^ *\\([-]\\) "
+     ;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+   ;; Set faces for heading levels
+   (dolist (face '((org-level-1 . 1.2)
+                   (org-level-2 . 1.1)
+                   (org-level-3 . 1.05)
+                   (org-level-4 . 1.0)
+                   (org-level-5 . 1.1)
+                   (org-level-6 . 1.1)
+                   (org-level-7 . 1.1)
+                   (org-level-8 . 1.1)))
+   (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-;;    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
-    )
+   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+     (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+     (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+     (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+ ;;    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+     )
 
-  (use-package org
-    :hook (org-mode . jeff/org-mode-setup)
-    :config
-    (;;setq org-ellipsis " ▾"
-      setq    org-hide-emphasis-markers t)
-    ;;(jeff/org-mode-font-setup)
-    )
+   (use-package org
+     :hook (org-mode . jeff/org-mode-setup)
+     :config
+     (;;setq org-ellipsis " ▾"
+       setq    org-hide-emphasis-markers t)
+     ;;(jeff/org-mode-font-setup)
+     )
 
-(setq org-clock-sound "c:/Users/Jeff/Downloads/elevator-announcement-bells.wav")
+ (setq org-clock-sound "c:/Users/Jeff/Downloads/elevator-announcement-bells.wav")
 
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+   (use-package org-bullets
+     :after org
+     :hook (org-mode . org-bullets-mode)
+     :custom
+     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (clojure . t)))
-  (setq org-confirm-babel-evaluate nil)
+   (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (clojure . t)))
+   (setq org-confirm-babel-evaluate nil)
 
-  (require 'org-tempo)
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("cl" . "src clojure"))
+   (require 'org-tempo)
+   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+   (add-to-list 'org-structure-template-alist '("cl" . "src clojure"))
 
 
-  (defun efs/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
+   (defun efs/org-mode-visual-fill ()
+     (setq visual-fill-column-width 100
+           visual-fill-column-center-text t)
+     (visual-fill-column-mode 1))
 
-  (use-package visual-fill-column
-    :hook (org-mode . efs/org-mode-visual-fill))
+   (use-package visual-fill-column
+     :hook (org-mode . efs/org-mode-visual-fill))
+(use-package ox-jira)
 
 (use-package org-super-agenda
     :after org-agenda
@@ -741,9 +742,12 @@ capture was not aborted."
   :config
   (setq typescript-indent-level 2))
 
-(setq plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2021.16.jar")
-(setq org-plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2021.16.jar")
-(setq plantuml-default-exec-mode 'jar)
+(use-package plantuml-mode)
+    (setq plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2022.6.jar")
+    (setq org-plantuml-jar-path "c:/Users/Jeff/.java/plantuml-1.2022.6.jar")
+    (setq plantuml-default-exec-mode 'jar)
+  (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
 
 (use-package csharp-mode)
 ( add-hook 'csharp-mode-hook 'lsp  )
@@ -794,6 +798,8 @@ capture was not aborted."
 (use-package smartparens
   :config (smartparens-global-mode))
 
+(use-package restclient)
+
 ;; (use-package eaf
 ;;   :load-path "~/newemacs.d/site-lisp/emacs-application-framework"
 ;;   :custom
@@ -840,3 +846,8 @@ capture was not aborted."
  eww-search-prefix "https://duckduckgo.com/?q=")    ; Use another engine for searching
 
 (use-package pocket-reader)
+
+(use-package smudge
+  :init (setq smudge-oauth2-client-secret "d3032fab98714d15aa5762ddb712adf7")
+  (setq smudge-oauth2-client-id "ef8657b4bac847a8b7011a1dcac6ccff")
+  (setq smudge-transport 'connect))
