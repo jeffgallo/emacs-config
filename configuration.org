@@ -778,6 +778,11 @@ In-buffer completion interface using TAB key for completion:
 (setq org-plantuml-jar-path "~/.java/plantuml-1.2021.16.jar")
 (setq plantuml-default-exec-mode 'jar)
 #+end_src
+*** C#
+installed omnisharp server for LSP-mode with auto-install (M-x lsp-install-server)
+#+begin_src emacs-lisp
+
+#+end_src
 ** Magit and Projectile
 Manage your project files!
 #+begin_src emacs-lisp
