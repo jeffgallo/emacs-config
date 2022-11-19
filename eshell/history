@@ -1,0 +1,16 @@
+ls
+cd Repos
+ls
+mkdir RazorWebApplication
+dotnet new sln
+ls
+rm Repos.sln 
+ls
+cd RazorWebApplication
+ls
+dotnet new sln
+ls
+dotnet new webapp -o RazorWebApplication.csproj
+dotnet run -project /home/jeff/Repos/RazorWebApplication/RazorWebApplication.csproj
+ls
+dotnet run --project /home/jeff/Repos/RazorWebApplication/RazorWebApplication.csproj

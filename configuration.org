@@ -807,7 +807,8 @@ In-buffer completion interface using TAB key for completion:
 *** C#
 installed omnisharp server for LSP-mode with auto-install (M-x lsp-install-server)
 #+begin_src emacs-lisp
-
+  (use-package csharp-mode)
+  ( add-hook 'csharp-mode-hook 'lsp  )
 #+end_src
 ** Magit and Projectile
 Manage your project files!

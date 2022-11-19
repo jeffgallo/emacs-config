@@ -717,6 +717,9 @@ capture was not aborted."
 (setq org-plantuml-jar-path "~/.java/plantuml-1.2021.16.jar")
 (setq plantuml-default-exec-mode 'jar)
 
+(use-package csharp-mode)
+( add-hook 'csharp-mode-hook 'lsp  )
+
 (use-package magit
   :ensure t)
 ;; add some global leader-key bindings for magit

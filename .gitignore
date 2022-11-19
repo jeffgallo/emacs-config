@@ -12,3 +12,4 @@ recentf*
 /projectile-bookmarks.eld
 /session.*
 custom.el
+.cache/*
