@@ -13,3 +13,6 @@ recentf*
 /session.*
 custom.el
 .cache/*
+/.org-id-locations
+/eshell/
+/.lsp-session-v1
