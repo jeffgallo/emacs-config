@@ -30,83 +30,88 @@
       user-mail-address "jeffreyfgallo@gmail.com")
 
 ;; Startup
-(setq inhibit-startup-message t
-      cursor-type 'bar)
-;; Confirm on quit
-(setq confirm-kill-processes nil)
+ (setq inhibit-startup-message t
+       cursor-type 'bar)
+ ;; Confirm on quit
+ (setq confirm-kill-processes nil)
 
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(set-fringe-mode 5)
-(when window-system (set-frame-size (selected-frame) 120 80))
-(defun display-line-numbers-hook ()
-  (display-line-numbers-mode t)
-  )
-(add-hook 'prog-mode-hook 'display-line-numbers-hook)
-(setq display-line-numbers-type 'relative)
+ (menu-bar-mode -1)
+ (tool-bar-mode -1)
+ (scroll-bar-mode -1)
+ (set-fringe-mode 5)
+ (when window-system (set-frame-size (selected-frame) 120 80))
+ (defun display-line-numbers-hook ()
+   (display-line-numbers-mode t)
+   )
+ (add-hook 'prog-mode-hook 'display-line-numbers-hook)
+ (setq display-line-numbers-type 'relative)
 
-;; Set up the visible bell
-(setq visible-bell t)
-;; Faces
-(defvar jeff/default-font-size 110)
-(set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
-;; Add a theme for eye-ease
-(use-package modus-themes
-  :ensure
-  :init
-  (setq modus-themes-italic-constructs t
-	modus-themes-bold-constructs nil
-	modus-themes-syntax '(faint)
-	modus-themes-mode-line '(accented borderless)
-	modus-themes-paren-match '(bold intense)
-	modus-themes-prompts '(bold intense)
-	modus-themes-region '(bg-only no-extend)
-	modus-themes-org-blocks 'tinted-background
-	modus-themes-scale-headings t
-	modus-themes-headings
-	'((1 . (rainbow overline background 1.4))
-	(2 . (rainbow background 1.3))
-	(3 . (rainbow bold 1.2))
-	(t . (semilight 1.1))))
+ ;; Set up the visible bell
+ (setq visible-bell t)
+ ;; Faces
+ (defvar jeff/default-font-size 110)
+ (set-face-attribute 'default nil :font "Fira Code" :height jeff/default-font-size)
+ (set-face-attribute 'italic nil :family "Hack")
+ ;; Set the fixed pitch face
+ (set-face-attribute 'fixed-pitch nil :font "Fira Code" :height 120)
+ ;; Set the variable pitch face
+;; (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 150 :weight 'regular)
+ ;; Add a theme for eye-ease
+  (use-package modus-themes
+    :ensure
+    :init
+    (setq modus-themes-italic-constructs t
+      modus-themes-bold-constructs nil
+      modus-themes-syntax '(faint)
+      modus-themes-mode-line '(accented borderless)
+      modus-themes-paren-match '(bold intense)
+      modus-themes-prompts '(bold intense)
+      modus-themes-region '(bg-only no-extend)
+ ;; 	modus-themes-org-blocks 'tinted-background
+ ;; 	modus-themes-scale-headings t
+ ;; 	modus-themes-headings
+ ;; 	'((1 . (rainbow overline background 1.4))
+ ;; 	(2 . (rainbow background 1.3))
+ ;; 	(3 . (rainbow bold 1.2))
+ ;; 	(t . (semilight 1.1)))
+      )
 
-  (modus-themes-load-themes)
-  :config
-  (modus-themes-load-vivendi))
-;; (use-package nord-theme
-;;   :ensure t
-;;   :config (load-theme 'nord t))
-;; (use-package doom-themes
-;;   :init (load-theme 'doom-nord t))
-;; Note: the first time you load this config you'll need to run the following interactively:
-;; M-x all-the-icons-install-fonts
-(use-package all-the-icons)
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1))
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-(use-package paren
-  :straight (:type built-in)
-  :ensure nil
-  :config
-  (show-paren-mode +1))
+    (modus-themes-load-themes)
+    :config
+    (modus-themes-load-vivendi))
+ ;; (use-package nord-theme
+ ;;   :ensure t
+ ;;   :config (load-theme 'nord t))
+ ;; (use-package doom-themes
+ ;;   :init (load-theme 'doom-nord t))
+ ;; Note: the first time you load this config you'll need to run the following interactively:
+ ;; M-x all-the-icons-install-fonts
+ (use-package all-the-icons)
+ (use-package doom-modeline
+   :ensure t
+   :init (doom-modeline-mode 1))
+ (use-package rainbow-delimiters
+   :hook (prog-mode . rainbow-delimiters-mode))
+ (use-package paren
+   :straight (:type built-in)
+   :ensure nil
+   :config
+   (show-paren-mode +1))
 
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
+ (use-package which-key
+   :init (which-key-mode)
+   :diminish which-key-mode
+   :config
+   (setq which-key-idle-delay 1))
 
-;; browse-kill-ring
-(use-package browse-kill-ring)
-;; Beacon mode
-(use-package beacon
-  :init (beacon-mode 1))
+ ;; browse-kill-ring
+ (use-package browse-kill-ring)
+ ;; Beacon mode
+ (use-package beacon
+   :init (beacon-mode 1))
+
+(use-package exec-path-from-shell
+   :config (exec-path-from-shell-initialize))
 
 ;; Evil mode
   (use-package evil
@@ -162,6 +167,7 @@
      "r" '(:ignore t :which-key "read")
      "re" '(elfeed :which-key "elfeed")
      "rp" '(pocket-reader :which-key "pocket")
+     "e" '(mu4e :which-key "Email")
      "o" '(:ignore t :which-key "org")
      "oa" '(org-agenda :which-key "org-agenda")
      "oc" '(org-capture :which-key "org-capture")
@@ -720,6 +726,13 @@ capture was not aborted."
 (use-package csharp-mode)
 ( add-hook 'csharp-mode-hook 'lsp  )
 
+(use-package rust-mode)
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
+(setq rust-format-on-save t)
+(add-hook 'rust-mode-hook
+        (lambda () (prettify-symbols-mode)))
+
 (use-package magit
   :ensure t)
 ;; add some global leader-key bindings for magit
@@ -759,9 +772,41 @@ capture was not aborted."
 (jeff/leader-keys
   "p" 'projectile-command-map)
 
-(use-package company-tabnine
-     :ensure t)
-(add-to-list 'company-backends #'company-tabnine)
+(use-package copilot
+    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+    :ensure t
+    )
+
+  ;; borrowed from: https://robert.kra.hn/posts/2023-02-22-copilot-emacs-setup/
+;;   (defun rk/no-copilot-mode ()
+;;   "Helper for `rk/no-copilot-modes'."
+;;   (copilot-mode -1))
+
+;; (defvar rk/no-copilot-modes '(shell-mode
+;;                               inferior-python-mode
+;;                               eshell-mode
+;;                               term-mode
+;;                               vterm-mode
+;;                               comint-mode
+;;                               compilation-mode
+;;                               debugger-mode
+;;                               dired-mode-hook
+;;                               compilation-mode-hook
+;;                               flutter-mode-hook
+;;                               minibuffer-mode-hook)
+;;   "Modes in which copilot is inconvenient.")
+
+;; (defun rk/copilot-disable-predicate ()
+;;   "When copilot should not automatically show completions."
+;;   (or rk/copilot-manual-mode
+;;       (member major-mode rk/no-copilot-modes)
+;;       (company--active-p)))
+
+;; (add-to-list 'copilot-disable-predicates #'rk/copilot-disable-predicate)
+
+;;    (use-package company-tabnine
+;;      :ensure t)
+;; (add-to-list 'company-backends #'company-tabnine)
 
 (use-package smartparens
   :config (smartparens-global-mode))
@@ -787,8 +832,8 @@ capture was not aborted."
 
 ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
   ;;(set-frame-parameter (selected-frame) 'alpha <both>)
-  (set-frame-parameter (selected-frame) 'alpha '(92 . 60))
-  (add-to-list 'default-frame-alist '(alpha . (92 . 60)))
+  (set-frame-parameter (selected-frame) 'alpha '(87 . 60))
+  (add-to-list 'default-frame-alist '(alpha . (87 . 60)))
 
 (defun toggle-transparency ()
   (interactive)
@@ -800,7 +845,7 @@ capture was not aborted."
                     ;; Also handle undocumented (<active> <inactive>) form.
                     ((numberp (cadr alpha)) (cadr alpha)))
               100)
-         '(92 . 60) '(100 . 100)))))
+         '(87 . 60) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 (setq
@@ -812,3 +857,25 @@ capture was not aborted."
  eww-search-prefix "https://duckduckgo.com/?q=")    ; Use another engine for searching
 
 (use-package pocket-reader)
+
+(use-package mu4e
+  :ensure disabled
+  :load-path "/usr/share/emacs/site-lisp/mu4e"
+  :config
+
+  (setq mu4e-update-interval (* 10 60))
+  (setq mu4e-get-mail-command "offlineimap")
+  (setq mu4e-maildir "~/Maildir")
+
+  (setq mu4e-drafts-folder "/[Gmail].Drafts")
+  (setq mu4e-sent-folder "/[Gmail].Sent Mail")
+  (setq mu4e-refile-folder "/[Gmail].All Mail")
+  (setq mu4e-trash-folder "/[Gmail].Trash")
+
+  (setq mu4e-maildir-shortcuts
+	'(("/Inbox"                            . ?i)
+	  ("/[Gmail].Sent Mail" . ?s)
+	  ("/[Gmail].Drafts" . ?d)
+	  ("/[Gmail].Trash" . ?t)
+	  ("/[Gmail].All Mail" . ?a)))
+  )

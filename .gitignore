@@ -16,3 +16,13 @@ custom.el
 /.org-id-locations
 /eshell/
 /.lsp-session-v1
+network-security.data
+tramp
+.extension/vscode/*
+eln-cache/*
+elpa/archives/gnu/archive-contents
+elpa/archives/gnu/archive-contents.signed
+elpa/archives/nongnu/archive-contents
+elpa/archives/nongnu/archive-contents.signed
+elpa/gnupg/pubring.kbx
+elpa/gnupg/trustdb.gpg
